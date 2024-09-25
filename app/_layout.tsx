@@ -35,10 +35,14 @@ export default function RootLayout() {
   return (
     <ThemeProvider theme={theme}>
       <SafeAreaContainer>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: {
+              backgroundColor: "#ffffff",
+            },
+          }}
+        ></Stack>
       </SafeAreaContainer>
     </ThemeProvider>
   );
