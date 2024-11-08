@@ -1,3 +1,7 @@
+import { authButtonAtom } from "@/app/atoms/auth/authButtonAtom";
+import { authCompleteButtonAtom } from "@/app/atoms/auth/authCompleteButtonAtom";
+import { phoneNumberAtom } from "@/app/atoms/auth/phoneNumberAtom";
+import { placeHolderTextAtom } from "@/app/atoms/auth/placeholderTextAtom";
 import { theme } from "@/constants/Theme";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TextInput } from "react-native";
@@ -5,9 +9,29 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+import { useRecoilState } from "recoil";
 
 export default function PhoneNumberInput() {
   const [isFocused, setIsFocused] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useRecoilState(phoneNumberAtom);
+  const [placeholderText, setPlaceholderText] =
+    useRecoilState(placeHolderTextAtom);
+  const [authButton, setAuthButton] = useRecoilState(authButtonAtom);
+  const [authCompleteButton, setAuthCompleteButton] = useRecoilState(
+    authCompleteButtonAtom
+  );
+
+  const handleChangePhoneNumber = (text: string) => {
+    if (!authButton) {
+      setAuthButton(text?.length >= 11 ? true : false);
+    }
+
+    if (!authCompleteButton && text?.length < 11) {
+      setAuthButton(false);
+    }
+
+    setPhoneNumber(text);
+  };
 
   return (
     <View>
@@ -16,10 +40,12 @@ export default function PhoneNumberInput() {
           styles.input,
           isFocused ? styles.activeColor : styles.inActiveColor,
         ]}
-        placeholder="01012345678"
+        placeholder={placeholderText}
         placeholderTextColor="#999999"
         keyboardType="numeric"
-        maxLength={11}
+        maxLength={authCompleteButton ? 4 : 11}
+        value={phoneNumber}
+        onChangeText={handleChangePhoneNumber}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />

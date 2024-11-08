@@ -1,11 +1,17 @@
+import React from "react";
 import PageTitle from "@/common/components/PageTitle";
-import PhoneNumberInput from "@/common/components/PhoneNumberInput";
 import SubTitle from "@/common/components/SubTitle";
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import AuthCompleteButton from "./components/AuthCompleteButton";
+import PhoneNumberInput from "./components/PhoneNumberInput";
+import { useRecoilState } from "recoil";
+import { authCompleteButtonAtom } from "@/app/atoms/auth/authCompleteButtonAtom";
 
 export default function SignUp() {
+  const [authCompleteButton, setAuthCompleteButton] = useRecoilState(
+    authCompleteButtonAtom
+  );
+
   return (
     <View style={styles.container}>
       <PageTitle title01="휴대폰 번호를" title02="입력해주세요" />
@@ -17,7 +23,7 @@ export default function SignUp() {
       </View>
       <View style={styles.phoneNumberInput}>
         <PhoneNumberInput />
-        <AuthCompleteButton title="인증" />
+        <AuthCompleteButton title={authCompleteButton ? "확인" : "인증"} />
       </View>
     </View>
   );

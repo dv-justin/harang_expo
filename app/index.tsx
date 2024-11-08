@@ -22,12 +22,12 @@ export default function Landing() {
       <StatusBar style="light" />
       <View style={styles.container}>
         <View style={styles.bannerGroup}>
-          <Text style={[styles.title, styles.primaryColor]}>새로운 여정</Text>
-          <Text style={[styles.title, styles.subColor]}>친구와 함께</Text>
+          <Text style={[styles.title, styles.subColor]}>하나님을 바라보는</Text>
+          <Text style={[styles.title, styles.subColor]}>인연을 만나려면?</Text>
         </View>
         <View style={styles.logo}>
-          <Text style={[styles.logoTitle, styles.primaryColor]}>시</Text>
-          <Text style={[styles.logoTitle, styles.subColor]}>소</Text>
+          <Text style={[styles.logoSubTitle]}>하나님안에서의 사랑</Text>
+          <Text style={[styles.logoTitle, styles.primaryColor]}>하랑</Text>
         </View>
       </View>
     </View>
@@ -42,20 +42,25 @@ const styles = StyleSheet.create({
   bannerGroup: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: responsiveHeight(20),
+    marginTop: responsiveHeight(14),
   },
   logo: {
     marginTop: responsiveHeight(18),
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   },
   logoTitle: {
-    fontSize: responsiveWidth(16),
+    fontSize: responsiveWidth(14),
     fontWeight: "bold",
   },
+  logoSubTitle: {
+    fontSize: responsiveWidth(4),
+    fontWeight: "bold",
+    color: "#FF9EAA",
+  },
   title: {
-    fontSize: responsiveWidth(7),
+    fontSize: responsiveWidth(6),
     fontWeight: "800",
     color: theme.colors.primaryText,
   },
@@ -64,6 +69,6 @@ const styles = StyleSheet.create({
   },
 
   subColor: {
-    color: theme.colors.sub,
+    color: theme.colors.primaryText,
   },
 });

@@ -1,6 +1,7 @@
 import { theme } from "@/constants/Theme";
+import { router } from "expo-router";
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -12,14 +13,17 @@ interface PageTitleProps {
 }
 
 export default function PageTitle({ title01, title02 }: PageTitleProps) {
+  const handleBackClickButton = () => {
+    router.back();
+  };
   return (
     <View>
-      <View style={styles.header}>
+      <Pressable style={styles.header} onPress={handleBackClickButton}>
         <Image
           style={styles.backImage}
           source={require("@/assets/images/back.png")}
         />
-      </View>
+      </Pressable>
       <Text style={[styles.title, styles.subColor]}>{title01}</Text>
       <Text style={styles.title}>{title02}</Text>
     </View>
@@ -31,17 +35,17 @@ const styles = StyleSheet.create({
     paddingBottom: responsiveHeight(4),
   },
   backImage: {
-    width: responsiveWidth(8),
-    height: responsiveWidth(8),
+    width: responsiveWidth(6),
+    height: responsiveWidth(6),
   },
 
   title: {
     fontWeight: "700",
-    fontSize: responsiveWidth(8),
+    fontSize: responsiveWidth(6),
     paddingVertical: 4,
   },
 
   subColor: {
-    color: theme.colors.sub,
+    color: theme.colors.primary,
   },
 });

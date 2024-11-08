@@ -18,21 +18,19 @@ export default function Auth() {
   return (
     <View style={styles.container}>
       <View style={styles.bannerGroup}>
-        <Text style={[styles.bannerTitle, styles.primaryColor]}>친구</Text>
-        <Text style={[styles.bannerTitle, styles.subColor]}> 만날 땐?</Text>
-      </View>
-      <View style={styles.logo}>
-        <Image
-          style={styles.logoImage}
-          source={require("@/assets/images/logo.png")}
-        />
-        <Text>
-          <Text style={[styles.logoTitle, styles.primaryColor]}>시</Text>
-          <Text style={[styles.logoTitle, styles.subColor]}>소</Text>
+        <Text style={[styles.bannerTitle, styles.subColor]}>
+          하나님을 바라보는
+        </Text>
+        <Text style={[styles.bannerTitle, styles.subColor]}>
+          인연을 만나려면?
         </Text>
       </View>
+      <View style={styles.logo}>
+        <Text style={[styles.logoSubTitle]}>하나님안에서의 사랑</Text>
+        <Text style={[styles.logoTitle, styles.primaryColor]}>하랑</Text>
+      </View>
       <Pressable style={styles.buttonGroup} onPress={buttonClick}>
-        <Button title="휴대폰으로 시작하기" />
+        <Button title="휴대폰번호로 시작하기" />
       </Pressable>
     </View>
   );
@@ -45,14 +43,14 @@ const styles = StyleSheet.create({
   },
 
   bannerGroup: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: responsiveHeight(20),
+    marginTop: responsiveHeight(14),
   },
 
   bannerTitle: {
-    fontSize: responsiveWidth(8),
+    fontSize: responsiveWidth(6),
     fontWeight: "bold",
   },
 
@@ -60,7 +58,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: responsiveHeight(14),
+    marginTop: responsiveHeight(20),
   },
 
   logoImage: {
@@ -70,7 +68,7 @@ const styles = StyleSheet.create({
   },
 
   logoTitle: {
-    fontSize: responsiveWidth(16),
+    fontSize: responsiveWidth(14),
     fontWeight: "bold",
   },
 
@@ -85,6 +83,12 @@ const styles = StyleSheet.create({
   },
 
   subColor: {
-    color: theme.colors.sub,
+    color: theme.colors.primaryText,
+  },
+
+  logoSubTitle: {
+    fontSize: responsiveWidth(4),
+    color: "#FF9EAA",
+    fontWeight: "700",
   },
 });
