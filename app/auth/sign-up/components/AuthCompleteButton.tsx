@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: responsiveHeight(3),
     paddingVertical: responsiveWidth(2),
-    borderRadius: 15,
+    borderRadius: 10,
   },
 
   title: {

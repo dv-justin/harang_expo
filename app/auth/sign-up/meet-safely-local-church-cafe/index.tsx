@@ -1,4 +1,3 @@
-import { theme } from "@/constants/Theme";
 import React from "react";
 import { View, StyleSheet, Text, Pressable } from "react-native";
 import {
@@ -7,23 +6,24 @@ import {
 } from "react-native-responsive-dimensions";
 import Button from "@/common/components/Button";
 import { useRouter } from "expo-router";
+import { theme } from "@/constants/Theme";
 
-export default function CertifiedLoveDonation() {
+export default function MeetSafelyLocalChurchCafe() {
   const router = useRouter();
 
   const buttonClick = () => {
-    router.push("/auth/sign-up/meet-safely-local-church-cafe");
+    router.push("/(tabs)");
   };
 
   return (
     <View style={styles.container}>
       <Text>
-        <Text style={[styles.title, styles.pinkColor]}>연애 인증시</Text>
+        <Text style={[styles.title, styles.mainColor]}>지역 교회 카페</Text>
+        <Text style={[styles.title, styles.subColor]}>에서</Text>
       </Text>
       <Text>
-        <Text style={[styles.title, styles.subColor]}>매칭 비용 </Text>
-        <Text style={[styles.title, styles.mainColor]}>전액 기부 </Text>
-        <Text style={[styles.title, styles.subColor]}>됩니다.</Text>
+        <Text style={[styles.title, styles.mainColor]}>안전한 만남</Text>
+        <Text style={[styles.title, styles.subColor]}>이 진행되요!</Text>
       </Text>
       <Pressable style={styles.buttonGroup} onPress={buttonClick}>
         <Button title="다음" />
@@ -51,10 +51,6 @@ const styles = StyleSheet.create({
 
   subColor: {
     color: theme.colors.primaryText,
-  },
-
-  pinkColor: {
-    color: "#FF9EAA",
   },
 
   buttonGroup: {

@@ -56,12 +56,12 @@ export default function PhoneNumberInput() {
 const styles = StyleSheet.create({
   input: {
     width: responsiveWidth(60),
-    height: responsiveHeight(8),
+    height: responsiveHeight(6),
     borderWidth: 2,
-    borderRadius: 15,
+    borderRadius: 10,
     paddingVertical: 2,
     paddingLeft: 16,
-    fontSize: responsiveWidth(6),
+    fontSize: responsiveWidth(4.8),
     fontWeight: "600",
     color: theme.colors.primaryText,
     backgroundColor: "#ffffff",

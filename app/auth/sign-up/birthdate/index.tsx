@@ -77,13 +77,13 @@ const styles = StyleSheet.create({
   },
   input: {
     width: responsiveWidth(80),
-    height: responsiveHeight(8),
+    height: responsiveHeight(6),
     borderWidth: 2,
-    borderRadius: 15,
+    borderRadius: 10,
     paddingVertical: 2,
     paddingLeft: 16,
-    fontSize: responsiveWidth(6),
-    fontWeight: "600",
+    fontSize: responsiveWidth(4.8),
+    fontWeight: "700",
     color: theme.colors.primaryText,
     backgroundColor: "#ffffff",
     letterSpacing: responsiveWidth(0.8),
@@ -102,12 +102,12 @@ const styles = StyleSheet.create({
     fontSize: responsiveWidth(4),
     fontWeight: "700",
     marginTop: responsiveHeight(1),
-    color: theme.colors.sub,
+    color: theme.colors.inActiveText,
   },
 
   buttonGroup: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: responsiveHeight(48),
+    marginTop: responsiveHeight(44),
   },
 });

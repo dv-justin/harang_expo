@@ -119,7 +119,7 @@ export default function Region() {
     handleBottomSheetValue(region);
 
     if (value === 3) {
-      router.push("/auth/sign-up/certified-love-donation");
+      router.push("/auth/sign-up/church");
     }
   };
 

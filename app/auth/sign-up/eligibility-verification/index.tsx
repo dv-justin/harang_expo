@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: "700",
     fontSize: responsiveWidth(6),
-    paddingVertical: 4,
+    paddingVertical: responsiveWidth(2),
   },
 
   contents: {
@@ -139,20 +139,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     backgroundColor: "rgba(255, 158, 170, 0.3)", // 배경 색상
-    padding: 15,
-    marginBottom: 10,
+    padding: responsiveWidth(3),
+    marginBottom: responsiveHeight(1),
     borderRadius: 10,
   },
 
   checkbox: {
-    width: 24,
-    height: 24,
+    width: responsiveWidth(6),
+    height: responsiveWidth(6),
     borderRadius: 5,
     borderWidth: 2,
     borderColor: "#FF9EAA",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 10,
+    marginRight: responsiveWidth(4),
   },
 
   checked: {
@@ -164,14 +164,14 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    fontSize: 16,
+    fontSize: responsiveWidth(4),
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 5,
+    marginBottom: responsiveHeight(1),
   },
 
   description: {
-    fontSize: 14,
+    fontSize: responsiveWidth(3.6),
     color: "#666",
   },
 
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     height: responsiveHeight(7),
     fontSize: responsiveWidth(4),
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: theme.colors.inActiveText,
     paddingBottom: responsiveHeight(1),
   },
 
