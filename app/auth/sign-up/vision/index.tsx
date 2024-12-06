@@ -20,36 +20,31 @@ import {
 } from "react-native-responsive-dimensions";
 import { useRecoilState } from "recoil";
 
-export default function BirthDate() {
+export default function Vision() {
   const router = useRouter();
 
   const [isFocused, setIsFocused] = useState(false);
-  const [birthDate, setBirthDate] = useState("");
+  const [content, setContent] = useState("");
   const [buttonState, setButtonState] = useState(false);
 
   const [user, setUser] = useRecoilState(userAtom);
 
-  const checkBirthDate = (): boolean => {
-    return birthDate?.length !== 8 ? true : false;
-  };
-
-  const handleChangeBirthDate = (text: string) => {
-    setButtonState(false);
-    setBirthDate(text);
+  const handleChangeContent = (text: string) => {
+    setContent(text);
   };
 
   const buttonClick = () => {
     setButtonState(true);
-    if (checkBirthDate()) {
+    if (content.length < 30) {
       return;
     }
 
     setUser({
       ...user,
-      birthDate: birthDate,
+      vision: content,
     });
 
-    router.push("/auth/sign-up/gender");
+    router.push("/auth/sign-up/together");
   };
 
   const dismissKeyboard = () => {
@@ -59,24 +54,25 @@ export default function BirthDate() {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        <PageTitle title01="생년월일" title02="입력해주세요" />
-        <Text style={styles.subText}>8자리로 입력해주세요. ex)19990708</Text>
+        <PageTitle title01="현재 주님안에서의 비전을" title02="나눠주세요" />
+        <Text style={styles.subText}>{content?.trim()?.length}/500</Text>
         <TextInput
           style={[
             styles.input,
             isFocused ? styles.activeColor : styles.inActiveColor,
           ]}
-          placeholder="생년월일을 입력해주세요"
+          multiline={true}
+          placeholder="최소 30자 이상 입력해주세요 ㅎㅎ"
           placeholderTextColor="#999999"
-          keyboardType="numeric"
-          value={birthDate}
-          onChangeText={handleChangeBirthDate}
+          keyboardType="default"
+          value={content}
+          onChangeText={handleChangeContent}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
         <Text style={styles.alarmInputName}>
-          {buttonState && checkBirthDate()
-            ? "생년월일을 8자로 입력해주세요"
+          {buttonState && content?.length < 30
+            ? "최소 30자 이상 입력해주세요"
             : ""}
         </Text>
         <Pressable style={styles.buttonGroup} onPress={buttonClick}>
@@ -99,14 +95,15 @@ const styles = StyleSheet.create({
     paddingTop: responsiveHeight(4),
     paddingBottom: responsiveHeight(1),
   },
+  numberCharactersText: {},
   input: {
     width: responsiveWidth(80),
-    height: responsiveHeight(6),
+    height: responsiveHeight(20),
     borderWidth: 2,
     borderRadius: 10,
-    paddingVertical: 2,
-    paddingLeft: 16,
-    fontSize: responsiveWidth(4.8),
+    paddingVertical: responsiveHeight(1),
+    paddingLeft: 12,
+    fontSize: responsiveWidth(4),
     fontWeight: "700",
     color: theme.colors.primaryText,
     backgroundColor: "#ffffff",
@@ -132,6 +129,7 @@ const styles = StyleSheet.create({
   buttonGroup: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: responsiveHeight(44),
+    marginTop:
+      responsiveHeight(100) > 875 ? responsiveHeight(32) : responsiveHeight(28),
   },
 });

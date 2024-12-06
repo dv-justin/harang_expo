@@ -7,24 +7,27 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+import { getAccessToken } from "@/services/auth/auth";
 
 export default function Landing() {
   const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      router.push("/auth");
-    }, 1000);
-    return () => clearTimeout(timer);
+    const checkAuthentication = async () => {
+      try {
+        const accessToken = await getAccessToken();
+        router.push(`/${accessToken ? "(tabs)" : "auth"}`);
+      } catch (error) {
+        router.push("/auth");
+      }
+    };
+
+    checkAuthentication();
   }, [router]);
   return (
     <View>
       <StatusBar style="light" />
       <View style={styles.container}>
-        <View style={styles.bannerGroup}>
-          <Text style={[styles.title, styles.subColor]}>하나님을 바라보는</Text>
-          <Text style={[styles.title, styles.subColor]}>인연을 만나려면?</Text>
-        </View>
         <View style={styles.logo}>
           <Text style={[styles.logoSubTitle]}>하나님안에서의 사랑</Text>
           <Text style={[styles.logoTitle, styles.primaryColor]}>하랑</Text>
@@ -39,13 +42,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  bannerGroup: {
-    flexDirection: "column",
-    alignItems: "center",
-    marginTop: responsiveHeight(14),
-  },
   logo: {
-    marginTop: responsiveHeight(18),
+    marginTop: responsiveHeight(40),
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
@@ -58,11 +56,6 @@ const styles = StyleSheet.create({
     fontSize: responsiveWidth(4),
     fontWeight: "bold",
     color: "#FF9EAA",
-  },
-  title: {
-    fontSize: responsiveWidth(6),
-    fontWeight: "800",
-    color: theme.colors.primaryText,
   },
   primaryColor: {
     color: theme.colors.primary,

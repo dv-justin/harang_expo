@@ -32,6 +32,7 @@ export default function PageTitle({ title01, title02 }: PageTitleProps) {
 
 const styles = StyleSheet.create({
   header: {
+    paddingTop: responsiveHeight(4),
     paddingBottom: responsiveHeight(4),
   },
   backImage: {

@@ -1,5 +1,5 @@
 import { theme } from "@/constants/Theme";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -12,11 +12,13 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import Button from "@/common/components/Button";
+import Button from "@/components/Button";
 import { useRouter } from "expo-router";
-import PageTitle from "@/common/components/PageTitle";
+import PageTitle from "@/components/PageTitle";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useRecoilState } from "recoil";
+import { userAtom } from "@/atoms/user/userAtom";
 
 const siRegion = ["서울", "경기", "특별자치/광역시", "일반 광역지자체"];
 
@@ -106,19 +108,28 @@ const overseasRegions = ["해외"];
 
 export default function Region() {
   const router = useRouter();
-  const bottomSheetRef = useRef<BottomSheet>(null);
+
   const [region, setIsRegion] = useState("");
   const [subRegion, setIsSubRegion] = useState("");
   const [selectSubRegion, setSelectSubRegion] = useState<string[]>(seoulRegion);
   const [selectIndex, setSelectIndex] = useState(0);
 
-  const regionButtonClick = (region: string, value: number) => {
-    value === 2 ? setIsRegion(region) : setIsSubRegion(region);
+  const [user, setUser] = useRecoilState(userAtom);
+
+  const regionButtonClick = (regionValue: string, value: number) => {
+    value === 2 ? setIsRegion(regionValue) : setIsSubRegion(regionValue);
     setSelectIndex(value);
 
-    handleBottomSheetValue(region);
+    handleBottomSheetValue(regionValue);
 
     if (value === 3) {
+      setUser({
+        ...user,
+        regionLevel1: region,
+        regionLevel2: subRegion,
+      });
+
+      setSelectIndex(0);
       router.push("/auth/sign-up/church");
     }
   };

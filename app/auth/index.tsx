@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { theme } from "@/constants/Theme";
 import { useRouter } from "expo-router";
-import Button from "@/common/components/Button";
+import Button from "@/components/Button";
 import {
   responsiveHeight,
   responsiveWidth,

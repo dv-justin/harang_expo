@@ -5,7 +5,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import Button from "@/common/components/Button";
+import Button from "@/components/Button";
 import { useRouter } from "expo-router";
 
 export default function PurityOnly() {
@@ -17,14 +17,16 @@ export default function PurityOnly() {
 
   return (
     <View style={styles.container}>
-      <Text>
-        <Text style={[styles.title, styles.mainColor]}>혼전순결</Text>
-        <Text style={[styles.title, styles.subColor]}>을 지키는</Text>
-      </Text>
-      <Text>
-        <Text style={[styles.title, styles.mainColor]}>사람들만</Text>
-        <Text style={[styles.title, styles.subColor]}>가입이 가능해요!</Text>
-      </Text>
+      <View style={styles.titleGroup}>
+        <Text>
+          <Text style={[styles.title, styles.mainColor]}>혼전순결</Text>
+          <Text style={[styles.title, styles.subColor]}>을 지키는</Text>
+        </Text>
+        <Text>
+          <Text style={[styles.title, styles.mainColor]}>사람들만</Text>
+          <Text style={[styles.title, styles.subColor]}>가입이 가능해요!</Text>
+        </Text>
+      </View>
       <Pressable style={styles.buttonGroup} onPress={buttonClick}>
         <Button title="다음" />
       </Pressable>
@@ -34,9 +36,14 @@ export default function PurityOnly() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 22,
-    paddingVertical: 2,
-    marginTop: responsiveHeight(4),
+    width: responsiveWidth(100),
+    height: responsiveHeight(100),
+    flexDirection: "column",
+    alignItems: "center",
+  },
+
+  titleGroup: {
+    marginTop: responsiveHeight(30),
   },
 
   title: {
@@ -56,6 +63,6 @@ const styles = StyleSheet.create({
   buttonGroup: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: responsiveHeight(68),
+    marginTop: responsiveHeight(42),
   },
 });

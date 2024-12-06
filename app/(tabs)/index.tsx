@@ -14,9 +14,12 @@ export default function HomeScreen() {
         </Text>
         <Text style={styles.matchingStateText}>매칭 해제</Text>
       </View>
-      <View style={styles.guide}></View>
+      <View style={styles.meetingScheduleGroup}>
+        <Text style={styles.meetingScheduleTitle}>만남 일정</Text>
+        <View style={styles.meetingSchedule}></View>
+      </View>
       <View style={styles.tieGroup}>
-        <Text style={styles.tieTitle}>김진수님, 인연 찾으셨나요?</Text>
+        <Text style={styles.tieTitle}>주 안에서 사랑 배우기</Text>
         <View style={styles.tie}></View>
       </View>
     </View>
@@ -53,13 +56,21 @@ const styles = StyleSheet.create({
     color: theme.colors.sub,
     fontWeight: "700",
   },
+  meetingScheduleGroup: {
+    marginTop: responsiveHeight(4),
+  },
 
-  guide: {
+  meetingScheduleTitle: {
+    fontSize: responsiveWidth(5.4),
+    fontWeight: "700",
+    paddingBottom: responsiveHeight(1),
+  },
+
+  meetingSchedule: {
     width: responsiveWidth(90),
-    height: responsiveHeight(8),
+    height: responsiveHeight(12),
     backgroundColor: theme.colors.white,
     borderRadius: 10,
-    paddingTop: responsiveHeight(8),
   },
 
   tieGroup: {

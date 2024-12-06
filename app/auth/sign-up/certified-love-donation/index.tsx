@@ -5,7 +5,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import Button from "@/common/components/Button";
+import Button from "@/components/Button";
 import { useRouter } from "expo-router";
 
 export default function CertifiedLoveDonation() {
@@ -17,14 +17,17 @@ export default function CertifiedLoveDonation() {
 
   return (
     <View style={styles.container}>
-      <Text>
-        <Text style={[styles.title, styles.pinkColor]}>연애 인증시</Text>
-      </Text>
-      <Text>
-        <Text style={[styles.title, styles.subColor]}>매칭 비용 </Text>
-        <Text style={[styles.title, styles.mainColor]}>전액 기부 </Text>
-        <Text style={[styles.title, styles.subColor]}>됩니다.</Text>
-      </Text>
+      <View style={styles.titleGroup}>
+        <Text>
+          <Text style={[styles.title, styles.mainColor]}>연애 인증시</Text>
+        </Text>
+        <Text>
+          <Text style={[styles.title, styles.subColor]}>매칭 비용 </Text>
+          <Text style={[styles.title, styles.mainColor]}>전액 기부 </Text>
+          <Text style={[styles.title, styles.subColor]}>됩니다.</Text>
+        </Text>
+      </View>
+
       <Pressable style={styles.buttonGroup} onPress={buttonClick}>
         <Button title="다음" />
       </Pressable>
@@ -34,9 +37,14 @@ export default function CertifiedLoveDonation() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 22,
-    paddingVertical: 2,
-    marginTop: responsiveHeight(4),
+    width: responsiveWidth(100),
+    height: responsiveHeight(100),
+    flexDirection: "column",
+    alignItems: "center",
+  },
+
+  titleGroup: {
+    marginTop: responsiveHeight(30),
   },
 
   title: {
@@ -53,13 +61,9 @@ const styles = StyleSheet.create({
     color: theme.colors.primaryText,
   },
 
-  pinkColor: {
-    color: "#FF9EAA",
-  },
-
   buttonGroup: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: responsiveHeight(68),
+    marginTop: responsiveHeight(42),
   },
 });

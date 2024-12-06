@@ -20,36 +20,27 @@ import {
 } from "react-native-responsive-dimensions";
 import { useRecoilState } from "recoil";
 
-export default function BirthDate() {
+export default function Job() {
   const router = useRouter();
 
   const [isFocused, setIsFocused] = useState(false);
-  const [birthDate, setBirthDate] = useState("");
-  const [buttonState, setButtonState] = useState(false);
+  const [job, setJob] = useState("");
 
   const [user, setUser] = useRecoilState(userAtom);
 
-  const checkBirthDate = (): boolean => {
-    return birthDate?.length !== 8 ? true : false;
-  };
-
-  const handleChangeBirthDate = (text: string) => {
-    setButtonState(false);
-    setBirthDate(text);
+  const handleChangeJob = (text: string) => {
+    setJob(text);
   };
 
   const buttonClick = () => {
-    setButtonState(true);
-    if (checkBirthDate()) {
-      return;
+    if (job) {
+      setUser({
+        ...user,
+        companyName: job,
+      });
     }
 
-    setUser({
-      ...user,
-      birthDate: birthDate,
-    });
-
-    router.push("/auth/sign-up/gender");
+    router.push("/auth/sign-up/share-your-faith");
   };
 
   const dismissKeyboard = () => {
@@ -59,26 +50,24 @@ export default function BirthDate() {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        <PageTitle title01="생년월일" title02="입력해주세요" />
-        <Text style={styles.subText}>8자리로 입력해주세요. ex)19990708</Text>
+        <PageTitle
+          title01="재직중인 직장을"
+          title02="입력해주세요 (학생은 제외)"
+        />
+        <Text style={styles.subText}>ex) 삼*전자 / 디*플레이 개발자</Text>
         <TextInput
           style={[
             styles.input,
             isFocused ? styles.activeColor : styles.inActiveColor,
           ]}
-          placeholder="생년월일을 입력해주세요"
+          placeholder="직장 / 직업"
           placeholderTextColor="#999999"
-          keyboardType="numeric"
-          value={birthDate}
-          onChangeText={handleChangeBirthDate}
+          keyboardType="default"
+          value={job}
+          onChangeText={handleChangeJob}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
-        <Text style={styles.alarmInputName}>
-          {buttonState && checkBirthDate()
-            ? "생년월일을 8자로 입력해주세요"
-            : ""}
-        </Text>
         <Pressable style={styles.buttonGroup} onPress={buttonClick}>
           <Button title="다음" />
         </Pressable>

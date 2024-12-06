@@ -5,20 +5,12 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import Button from "@/common/components/Button";
-import { useRouter } from "expo-router";
 
-export default function PureIntentions() {
-  const router = useRouter();
-
-  const buttonClick = () => {
-    router.push("/auth/sign-up/purity-only");
-  };
-
+export default function ApprovalPending() {
   return (
     <View style={styles.container}>
       <View style={styles.titleGroup}>
-        <Text style={styles.title}>매니저가 성심성의껏</Text>
+        <Text style={styles.title}>하랑 매니저가</Text>
         <Text style={styles.title}>심사중이에요!</Text>
       </View>
       <Image

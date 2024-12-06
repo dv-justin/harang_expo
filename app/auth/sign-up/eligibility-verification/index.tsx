@@ -13,7 +13,7 @@ import {
 import { useRouter } from "expo-router";
 import { theme } from "@/constants/Theme";
 import { MaterialIcons } from "@expo/vector-icons";
-import Button from "@/common/components/Button";
+import Button from "@/components/Button";
 
 interface CheckBoxItemProps {
   label: string;
@@ -84,7 +84,7 @@ export default function EligibilityVerification() {
   return (
     <View style={styles.container}>
       <Text>
-        <Text style={[styles.title, styles.mainColor]}>하랑</Text>
+        <Text style={[styles.title, styles.mainColor]}>하랑 </Text>
         <Text style={[styles.title, styles.subColor]}>
           가입자격을 확인합니다.
         </Text>

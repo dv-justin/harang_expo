@@ -12,11 +12,11 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary, // 활성 탭 색상
+        tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: "#ccc",
         tabBarLabelStyle: {
-          fontSize: responsiveWidth(4), // 원하는 폰트 크기로 설정
-          fontWeight: "bold", // 폰트 굵기 설정 (선택 사항)
+          fontSize: responsiveWidth(4),
+          fontWeight: "bold",
         },
       }}
     >
