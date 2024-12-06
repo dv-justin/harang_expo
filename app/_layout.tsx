@@ -6,6 +6,7 @@ import { SafeAreaView, Platform } from "react-native";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { theme } from "@/constants/Theme";
+import { RecoilRoot } from "recoil";
 SplashScreen.preventAutoHideAsync();
 
 const SafeAreaContainer = styled(SafeAreaView)`
@@ -35,10 +36,16 @@ export default function RootLayout() {
   return (
     <ThemeProvider theme={theme}>
       <SafeAreaContainer>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
+        <RecoilRoot>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: "#ffffff",
+              },
+            }}
+          ></Stack>
+        </RecoilRoot>
       </SafeAreaContainer>
     </ThemeProvider>
   );
