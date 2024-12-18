@@ -1,5 +1,7 @@
 import MatchItem from "@/components/MatchItem";
 import { theme } from "@/constants/Theme";
+import { refreshAccessToken } from "@/services/auth/api";
+import { getRefreshToken, setAccessToken } from "@/services/auth/auth";
 import { getTies } from "@/services/tie/api";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -18,20 +20,11 @@ import {
 
 interface Tie {
   id: number;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
-  meeting_date: string | null;
-  meeting_status: number;
-  man_user: {
-    id: number;
-  };
-  female_user: {
-    id: number;
-  };
-  man_user_ticket_used: boolean;
-  female_user_ticket_used: boolean;
-  is_failed: boolean;
+  name: string;
+  meetingStatus: number;
+  isMyTicket: boolean;
+  isOpponentTicket: boolean;
+  isFailed: boolean;
 }
 
 export default function TieScreen() {
@@ -47,14 +40,37 @@ export default function TieScreen() {
     return;
   };
 
-  const fetchData = async (isRefresh = false) => {
+  async function handleUnauthorizedError(error: any) {
+    if (error.status === 401) {
+      const refreshToken = await getRefreshToken();
+
+      if (refreshToken) {
+        try {
+          const { access_token: accessToken } = await refreshAccessToken(
+            refreshToken
+          );
+          await setAccessToken(accessToken);
+          await fetchData();
+        } catch (refreshError: any) {
+          console.error("Failed to refresh access token:", refreshError);
+          router.replace("/auth");
+        }
+        return;
+      }
+
+      router.replace("/auth");
+    }
+    router.replace("/error");
+  }
+
+  const fetchData = async () => {
     try {
       const tiesValue = await getTies();
       if (tiesValue) {
         setTies(tiesValue);
       }
-    } catch (error) {
-      console.error("데이터 요청 실패:", error);
+    } catch (error: any) {
+      handleUnauthorizedError(error);
     }
   };
 
@@ -68,13 +84,14 @@ export default function TieScreen() {
     if (ties.length) {
       setSelectTies(
         ties.filter((tie) => {
-          return status ? tie?.meeting_status : !tie?.meeting_status;
+          return status ? tie?.meetingStatus : !tie?.meetingStatus;
         })
       );
     }
   }, [ties, status]);
 
   useEffect(() => {
+    console.log("들어오니?");
     fetchData();
   }, []);
 
@@ -126,13 +143,12 @@ export default function TieScreen() {
           {selectTies.map((tie, index) => (
             <MatchItem
               key={index}
-              name="김진수"
-              gender="man"
-              manUserTicketUsed={tie.man_user_ticket_used}
-              femaleUserTicketUsed={tie.female_user_ticket_used}
-              meetingStatus={tie.meeting_status}
-              checkTicket={false}
-              isFailed={tie.is_failed}
+              id={tie?.id}
+              name={tie?.name}
+              isMyTicket={tie?.isMyTicket}
+              isOpponentTicket={tie?.isOpponentTicket}
+              meetingStatus={tie.meetingStatus}
+              isFailed={tie.isFailed}
             />
           ))}
         </View>
@@ -145,7 +161,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: theme.colors.primaryRgb20,
+    backgroundColor: theme.colors.primaryRgb30,
     height: responsiveHeight(90),
     paddingBottom: responsiveHeight(10),
   },

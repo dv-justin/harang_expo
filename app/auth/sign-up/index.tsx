@@ -56,15 +56,28 @@ export default function SignUp() {
 
     if (authButton && completeButton) {
       console.log("인증번호 확인 완료");
-      const serverUser = await getUserInfo(phoneNumber);
 
-      await setAuthTokens(serverUser?.accessToken, serverUser?.refreshToken);
-      setUser({
-        ...user,
-        phoneNumber: phoneNumber,
-      });
+      try {
+        const serverUser = await getUserInfo(phoneNumber);
 
-      moveRouter(serverUser?.status);
+        if (serverUser) {
+          await setAuthTokens(
+            serverUser?.accessToken,
+            serverUser?.refreshToken
+          );
+
+          moveRouter(serverUser?.status);
+
+          return;
+        }
+        setUser({
+          ...user,
+          phoneNumber: phoneNumber,
+        });
+      } catch (error) {
+        router.replace("/error");
+        return;
+      }
     }
   };
 

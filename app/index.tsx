@@ -7,7 +7,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { getAccessToken } from "@/services/auth/auth";
+import { getAccessToken, getRefreshToken } from "@/services/auth/auth";
 
 export default function Landing() {
   const router = useRouter();
@@ -17,8 +17,12 @@ export default function Landing() {
       try {
         const accessToken = await getAccessToken();
         router.push(`/${accessToken ? "(tabs)" : "auth"}`);
-      } catch (error) {
-        router.push("/auth");
+      } catch (error: any) {
+        if (error.status === 401) {
+          router.replace("/auth");
+          return;
+        }
+        router.replace("/error");
       }
     };
 

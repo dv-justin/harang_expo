@@ -1,5 +1,4 @@
 import { User } from "@/atoms/user/userAtom";
-import axios from "axios";
 import apiClient from "../api.client";
 
 export const getUserInfo = async (
@@ -10,11 +9,7 @@ export const getUserInfo = async (
   status: string;
 }> => {
   try {
-    const response = await apiClient.get(`/users/phone-number/${phoneNumber}`, {
-      headers: {
-        Accept: "application/json",
-      },
-    });
+    const response = await apiClient.get(`/auth/phone-number/${phoneNumber}`);
     const {
       access_token: accessToken,
       refresh_token: refreshToken,
@@ -26,6 +21,17 @@ export const getUserInfo = async (
       refreshToken,
       status,
     };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserInfoAccessToken = async (
+  accessToken: string
+): Promise<any> => {
+  try {
+    const response = await apiClient.get(`/users/${accessToken}`);
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -81,17 +87,26 @@ export const register = async (
     };
 
     const response = await apiClient.post(
-      "/users",
+      "/auth",
       {
         ...serverUser,
       },
       {
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
       }
     );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const refreshAccessToken = async (refreshToken: string) => {
+  try {
+    const response = await apiClient.get(`/auth/${refreshToken}`);
+
     return response.data;
   } catch (error) {
     throw error;

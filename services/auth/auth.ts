@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { refreshAccessToken } from "./api";
 
 export const setAuthTokens = async (
   accessToken: string,
@@ -7,8 +8,8 @@ export const setAuthTokens = async (
   try {
     await AsyncStorage.setItem("accessToken", accessToken);
     await AsyncStorage.setItem("refreshToken", refreshToken);
-  } catch (e) {
-    console.error("토큰 저장 실패:", e);
+  } catch (error: any) {
+    throw error;
   }
 };
 
@@ -17,7 +18,24 @@ export const getAccessToken = async () => {
     const accessToken = await AsyncStorage.getItem("accessToken");
 
     return accessToken;
-  } catch (e) {
-    console.error("토큰 저장 실패:", e);
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const setAccessToken = async (accessToken: string) => {
+  try {
+    await AsyncStorage.setItem("accessToken", accessToken);
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+export const getRefreshToken = async () => {
+  try {
+    const refreshToken = await AsyncStorage.getItem("refreshToken");
+    return refreshToken;
+  } catch (error: any) {
+    throw error;
   }
 };

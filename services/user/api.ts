@@ -1,8 +1,9 @@
 import apiClient from "../api.client";
 
-export const getTies = async () => {
+export const getUserId = async (userId: number) => {
   try {
-    const response = await apiClient.get(`/ties`);
+    const response = await apiClient.get(`/users/${userId}`);
+
     return response.data;
   } catch (error) {
     throw error;

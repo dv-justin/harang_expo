@@ -4,13 +4,13 @@ import { getAccessToken } from "./auth/auth";
 const apiClient = axios.create({
   baseURL: "http://localhost:3000",
   headers: {
-    Accept: "application/json",
+    Accept: "*/*",
   },
 });
 
 apiClient.interceptors.request.use(
   async (config) => {
-    if (!config.url?.includes("/users")) {
+    if (!config.url?.includes("/auth")) {
       const accessToken = await getAccessToken();
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`;

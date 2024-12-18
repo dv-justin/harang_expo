@@ -18,7 +18,11 @@ export default function MeetSafelyLocalChurchCafe() {
   const [user, setUser] = useRecoilState(userAtom);
 
   const buttonClick = async () => {
-    await register(user);
+    try {
+      await register(user);
+    } catch (error) {
+      router.push("/error");
+    }
 
     router.push("/approval-pending");
   };
