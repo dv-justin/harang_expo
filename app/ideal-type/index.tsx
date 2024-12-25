@@ -33,12 +33,12 @@ export default function IdealType() {
       idealTypeDistance: doesNotMatter ? 100 : distance,
     });
 
-    router.push("/auth/sign-up/pure-intentions");
+    router.push("/pure-intentions");
   };
 
   return (
     <View style={styles.container}>
-      <PageTitle title01="이상형" title02="" />
+      <PageTitle title01="이상형을" title02="설정해주세요" />
       <View>
         <View style={styles.ageGroup}>
           <View style={styles.ageContentGroup}>
@@ -109,6 +109,10 @@ export default function IdealType() {
           </View>
         </View>
       </View>
+
+      <Pressable style={styles.buttonGroup} onPress={buttonClick}>
+        <Button title="다음" />
+      </Pressable>
     </View>
   );
 }

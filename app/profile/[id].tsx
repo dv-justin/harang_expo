@@ -10,7 +10,7 @@ import {
   Pressable,
 } from "react-native";
 import { getUserId } from "@/services/user/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -44,6 +44,8 @@ export default function UserProfile() {
 
   const { id } = useLocalSearchParams();
 
+  const birthDate = useRef<number>();
+
   const [profile, setProfile] = useState<profile>();
 
   async function handleUnauthorizedError(error: any) {
@@ -70,8 +72,11 @@ export default function UserProfile() {
   const fetchData = async () => {
     try {
       const userValue = await getUserId(Number(id));
+      setProfile(userValue);
+
       if (userValue) {
         setProfile(userValue);
+        birthDate.current = calculateBirthdate(userValue?.birthdate);
       }
     } catch (error: any) {
       handleUnauthorizedError(error);
@@ -107,9 +112,7 @@ export default function UserProfile() {
       <View style={styles.defaultInfoGroup}>
         <Text>
           <Text style={styles.nameAgeText}>{profile?.name} </Text>
-          <Text style={styles.nameAgeText}>
-            {calculateBirthdate(profile?.birthdate!)}
-          </Text>
+          <Text style={styles.nameAgeText}>{birthDate.current}</Text>
         </Text>
 
         <View style={styles.addInfoGroup}>
@@ -135,33 +138,75 @@ export default function UserProfile() {
         </View>
       </View>
       <View style={styles.infoGroup}>
-        <Text style={styles.infoTitle}>1. 내가 만난 하나님</Text>
+        <View style={styles.infoTitleGroup}>
+          <Image
+            style={styles.infoTitleIcon}
+            source={require("@/assets/images/profile/jesus.png")}
+          ></Image>
+          <Text style={styles.infoTitle}> 내가 만난 하나님</Text>
+        </View>
         <View style={styles.infoContentsGroup}>
           <Text style={styles.infoContent}>{profile?.yourFaith}</Text>
         </View>
-        <Text style={styles.infoTitle}>2.나의 인생에 영향을 준 성경</Text>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.yourFaith}</Text>
+        <View style={styles.infoTitleGroup}>
+          <Image
+            style={styles.infoTitleIcon}
+            source={require("@/assets/images/profile/bible.png")}
+          ></Image>
+          <Text style={styles.infoTitle}> 나의 인생에 영향을 준 성경</Text>
         </View>
-        <Text style={styles.infoTitle}>3. 품고있는 기도제목</Text>
         <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.yourFaith}</Text>
+          <Text style={styles.infoContent}>{profile?.influentialVerse}</Text>
         </View>
-        <Text style={styles.infoTitle}>4. 주님안에서의 비전</Text>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.yourFaith}</Text>
+        <View style={styles.infoTitleGroup}>
+          <Image
+            style={styles.infoTitleIcon}
+            source={require("@/assets/images/profile/prayer.png")}
+          ></Image>
+          <Text style={styles.infoTitle}> 품고있는 기도제목</Text>
         </View>
-        <Text style={styles.infoTitle}>5. 연인과 하고싶은 활동</Text>
         <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.yourFaith}</Text>
+          <Text style={styles.infoContent}>{profile?.prayerTopic}</Text>
         </View>
-        <Text style={styles.infoTitle}>6. 기대하는 만남</Text>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.yourFaith}</Text>
+        <View style={styles.infoTitleGroup}>
+          <Image
+            style={styles.infoTitleIcon}
+            source={require("@/assets/images/profile/vision.png")}
+          ></Image>
+          <Text style={styles.infoTitle}> 주님안에서의 비전</Text>
         </View>
-        <Text style={styles.infoTitle}>7. 매력 혹은 장점</Text>
         <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.yourFaith}</Text>
+          <Text style={styles.infoContent}>{profile?.vision}</Text>
+        </View>
+        <View style={styles.infoTitleGroup}>
+          <Image
+            style={styles.infoTitleIcon}
+            source={require("@/assets/images/profile/couple.png")}
+          ></Image>
+          <Text style={styles.infoTitle}> 연인과 하고싶은 활동</Text>
+        </View>
+        <View style={styles.infoContentsGroup}>
+          <Text style={styles.infoContent}>{profile?.coupleActivity}</Text>
+        </View>
+        <View style={styles.infoTitleGroup}>
+          <Image
+            style={styles.infoTitleIcon}
+            source={require("@/assets/images/profile/expected.png")}
+          ></Image>
+          <Text style={styles.infoTitle}> 기대하는 만남</Text>
+        </View>
+        <View style={styles.infoContentsGroup}>
+          <Text style={styles.infoContent}>{profile?.expectedMeeting}</Text>
+        </View>
+        <View style={styles.infoTitleGroup}>
+          <Image
+            style={styles.infoTitleIcon}
+            source={require("@/assets/images/profile/merit.png")}
+          ></Image>
+          <Text style={styles.infoTitle}> 매력 혹은 장점</Text>
+        </View>
+        <View style={styles.infoContentsGroup}>
+          <Text style={styles.infoContent}>{profile?.merit}</Text>
         </View>
       </View>
     </ScrollView>
@@ -172,7 +217,7 @@ const styles = StyleSheet.create({
   container: {
     width: responsiveWidth(100),
     height: responsiveHeight(100),
-    backgroundColor: theme.colors.primaryRgb20,
+    backgroundColor: theme.colors.white,
   },
   backImageGroup: {
     position: "absolute",
@@ -219,6 +264,15 @@ const styles = StyleSheet.create({
   infoGroup: {
     marginLeft: responsiveWidth(5),
     marginTop: responsiveHeight(4),
+  },
+  infoTitleGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  infoTitleIcon: {
+    width: 24,
+    height: 24,
   },
 
   infoTitle: {

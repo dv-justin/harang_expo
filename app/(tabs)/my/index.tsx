@@ -1,16 +1,21 @@
+import calculateBirthdate from "@/app/common/calculate-birthdate";
+import { userAtom } from "@/atoms/user/userAtom";
 import { theme } from "@/constants/Theme";
 import { router } from "expo-router";
+import { useEffect } from "react";
 import { View, StyleSheet, Text, Pressable, Image } from "react-native";
 import { red } from "react-native-reanimated/lib/typescript/Colors";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+import { useRecoilState } from "recoil";
 
 export default function MyScreen() {
+  const [user, setUser] = useRecoilState(userAtom);
+
   const clickItem = (type: string) => {
     if (type === "idealType") {
-      console.log("type", type);
       router.push("/ideal-type");
     }
   };
@@ -25,8 +30,11 @@ export default function MyScreen() {
           />
         </View>
         <View style={styles.profileContent}>
-          <Text style={styles.profileName}>김진수</Text>
-          <Text style={styles.profileInfo}>25세, 풀랩/IT - 개발자</Text>
+          <Text style={styles.profileName}>{user?.name}</Text>
+          <Text style={styles.profileInfo}>
+            {calculateBirthdate(user?.birthDate)},{" "}
+            {user?.companyName ? user?.companyName : user?.schoolAndMajor}
+          </Text>
         </View>
       </View>
       <View style={styles.line}></View>
@@ -77,7 +85,7 @@ const styles = StyleSheet.create({
     width: responsiveWidth(100),
     height: responsiveHeight(100),
     paddingVertical: responsiveWidth(8),
-    backgroundColor: theme.colors.primaryRgb30,
+    backgroundColor: theme.colors.background,
   },
   profile: {
     flexDirection: "row",
@@ -104,7 +112,7 @@ const styles = StyleSheet.create({
   line: {
     width: responsiveWidth(100),
     height: 2,
-    backgroundColor: theme.colors.primaryRgb20,
+    backgroundColor: theme.colors.white,
     marginTop: responsiveHeight(2),
   },
   contentGroup: {

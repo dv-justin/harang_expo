@@ -1,57 +1,143 @@
 import { theme } from "@/constants/Theme";
-import { View, StyleSheet, Text, ScrollView, Image } from "react-native";
+import { refreshAccessToken } from "@/services/auth/api";
+import { getRefreshToken, setAccessToken } from "@/services/auth/auth";
+import { getHome } from "@/services/home/api";
+import { useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  Image,
+  RefreshControl,
+} from "react-native";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+import maskMiddleName from "../common/mask-middle-name";
+import {
+  GestureHandlerRootView,
+  Pressable,
+} from "react-native-gesture-handler";
+
+interface Home {
+  id: string;
+  name: string;
+  address: string;
+  birthdate: string;
+}
 
 export default function HomeScreen() {
+  const router = useRouter();
+
+  const [home, setHome] = useState<Home>();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const getProfile = () => {
+    router.push(`/profile/${home?.id}`);
+  };
+
+  async function handleUnauthorizedError(error: any) {
+    if (error.status === 401) {
+      const refreshToken = await getRefreshToken();
+
+      if (refreshToken) {
+        try {
+          const { access_token: accessToken } = await refreshAccessToken(
+            refreshToken
+          );
+          await setAccessToken(accessToken);
+          await fetchData();
+        } catch (refreshError: any) {
+          console.error("Failed to refresh access token:", refreshError);
+          router.replace("/auth");
+        }
+        return;
+      }
+
+      router.replace("/auth");
+    }
+    router.replace("/error");
+  }
+
+  const fetchData = async () => {
+    try {
+      const homeValue = await getHome();
+
+      if (homeValue) {
+        setHome(homeValue);
+      }
+    } catch (error: any) {
+      handleUnauthorizedError(error);
+    }
+  };
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await fetchData();
+    setIsRefreshing(false);
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
   return (
-    <View style={styles.container}>
-      <View style={styles.lookingFor}>
-        <Text style={styles.lookingForText}>
-          좋은 사람을 매니저가 찾고있어요!
-        </Text>
-      </View>
-      {/* <View style={styles.introductionGroup}>
-        <Text style={styles.introductionText}>소개가 도착했어요!</Text>
-        <Text style={styles.introductionSubText}>
-          48시간 이내로 선택 부탁드려요!
-        </Text>
-        <Image
-          style={styles.profileImage}
-          source={require("@/assets/images/profile.png")}
-        />
-        <View style={styles.infoGroup}>
-          <Text style={styles.infoText}>김 * 희</Text>
-          <Text style={styles.infoText}>인천광역시 서구</Text>
-        </View>
-      </View> */}
-      <ScrollView style={styles.meetingScheduleGroup}>
-        <Text style={styles.meetingScheduleTitle}>만남 일정</Text>
-        <View style={styles.meetingScheduleScroll}>
-          <View style={styles.meetingSchedule}>
-            <Text style={styles.meetingScheduleContentText}>
-              장소: 소금밭 카페(수원 빛들로 교회)
+    <GestureHandlerRootView>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+        }
+      >
+        {home?.name ? (
+          <View style={styles.introductionGroup}>
+            <Image
+              style={styles.letterImage}
+              resizeMode="contain"
+              source={require("@/assets/images/letter.png")}
+            />
+            <Text style={styles.introductionText}>소개가 도착했어요</Text>
+            <Text style={styles.introductionSubText}>
+              24시간 이내로 선택 부탁드려요
             </Text>
-            <Text style={styles.meetingScheduleContentText}>
-              주소: 인천광역시 부평구 장제로 45
-            </Text>
-            <Text style={styles.meetingScheduleContentText}>
-              일정: 2024년 12월 24일 오후 8시
-            </Text>
+            <Pressable onPress={getProfile}>
+              <Image
+                style={styles.profileImage}
+                source={require("@/assets/images/profile.png")}
+              />
+            </Pressable>
+            <View style={styles.infoGroup}>
+              <Text style={styles.infoText}>
+                {maskMiddleName(home?.name)} {home?.birthdate}
+              </Text>
+              <Text style={styles.infoText}>{home?.address} </Text>
+            </View>
           </View>
-        </View>
+        ) : (
+          <View style={styles.lookingFor}>
+            <Text style={styles.lookingForText}>매니저가 좋은 인연을</Text>
+            <Text style={styles.lookingForText}>찾고있는 중이에요!</Text>
+          </View>
+        )}
       </ScrollView>
-    </View>
+      <View style={styles.introductionGuideGroup}>
+        <Text style={styles.introductionGuideTitle}>하랑 소개 가이드</Text>
+        <Image
+          style={styles.nextImage}
+          source={require("@/assets/images/next.png")}
+        />
+      </View>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: "100%",
-    backgroundColor: theme.colors.primaryRgb30,
+    height: responsiveHeight(80),
+    backgroundColor: theme.colors.background,
     flexDirection: "column",
     paddingLeft: responsiveWidth(5),
     paddingTop: responsiveHeight(4),
@@ -59,87 +145,98 @@ const styles = StyleSheet.create({
 
   lookingFor: {
     width: responsiveWidth(90),
-    height: responsiveHeight(30),
+    height: responsiveHeight(64),
     backgroundColor: theme.colors.white,
     borderRadius: 10,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 12,
   },
-
   lookingForText: {
     color: theme.colors.primary,
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "700",
+    paddingTop: 2,
+  },
+
+  intruductionTitleGroup: {
+    paddingTop: responsiveHeight(4),
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+
+  letterImage: {
+    width: 40,
+    height: 40,
+    paddingRight: 4,
   },
 
   introductionGroup: {
     width: responsiveWidth(90),
     flexDirection: "column",
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: theme.colors.white,
     borderRadius: 10,
+    marginBottom: 12,
+    marginTop: responsiveHeight(4),
   },
 
   introductionText: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "700",
-    color: theme.colors.sub,
-    paddingTop: 32,
+    color: theme.colors.primary,
+    paddingTop: 4,
   },
 
   introductionSubText: {
     fontSize: 14,
-    color: theme.colors.primary,
+    color: theme.colors.primaryText,
     fontWeight: "700",
-    paddingTop: 32,
-    marginBottom: 8,
+    marginBottom: responsiveHeight(2),
   },
 
   profileImage: {
-    width: responsiveWidth(30),
-    height: responsiveWidth(40),
-    borderRadius: 10,
+    width: responsiveWidth(64),
+    height: responsiveWidth(72),
+    paddingTop: responsiveHeight(2),
+    borderRadius: 20,
+    opacity: 0.4,
   },
 
   infoGroup: {
     flexDirection: "column",
     alignItems: "center",
-    marginVertical: 12,
+    marginVertical: responsiveHeight(2),
   },
 
   infoText: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "700",
     color: theme.colors.primaryText,
+    paddingTop: responsiveHeight(0.5),
   },
 
-  meetingScheduleGroup: {
-    marginTop: responsiveHeight(4),
+  nextImage: {
+    width: 20,
+    height: 20,
   },
 
-  meetingScheduleScroll: {
-    height: responsiveHeight(30),
-  },
-
-  meetingScheduleTitle: {
-    fontSize: responsiveWidth(5.4),
-    fontWeight: "700",
-    paddingBottom: responsiveHeight(1),
-  },
-
-  meetingSchedule: {
+  introductionGuideGroup: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     width: responsiveWidth(90),
-    padding: 14,
-    backgroundColor: theme.colors.white,
+    height: responsiveHeight(8),
+    backgroundColor: theme.colors.primaryRgb,
     borderRadius: 10,
+    marginBottom: responsiveHeight(2),
+    marginLeft: responsiveWidth(5),
+    paddingHorizontal: 24,
   },
-
-  meetingScheduleContentText: {
-    fontSize: 14,
-    paddingTop: responsiveHeight(0.4),
-    color: theme.colors.primaryText,
+  introductionGuideTitle: {
+    fontSize: 20,
     fontWeight: "700",
+    color: theme.colors.white,
   },
 });

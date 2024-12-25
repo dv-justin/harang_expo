@@ -82,17 +82,17 @@ export default function SignUp() {
   };
 
   const moveRouter = (status: string | undefined) => {
-    if (!status) {
-      router.push("/auth/sign-up/eligibility-verification");
-      return;
-    } else if (status === "심사 중") {
-      router.push("/auth/sign-up/approval-pending");
+    if (status === "심사 중") {
+      router.push("/approval-pending");
       return;
     } else if (status === "정상") {
       router.push("/(tabs)");
       return;
+    } else if (status === "반려") {
+      router.push("/companion");
+      return;
     }
-    router.push("/auth/sign-up/eligibility-verification");
+    router.push("/eligibility-verification");
   };
 
   return (

@@ -8,14 +8,6 @@ import {
 import { useRouter } from "expo-router";
 
 const itemTarget = {
-  waitingForConnection: {
-    title: "연결 대기중",
-    color: "#ADD899",
-    description: {
-      wait: "상대방 선택을 기다려주세요.",
-      connect: "바로 만남이 가능해요!",
-    },
-  },
   meetingCompleted: {
     title: "만남 완료",
     color: "#3AA6B9",
@@ -28,13 +20,8 @@ const itemTarget = {
   },
   meetingConfirmed: {
     title: "만남 확정",
-    color: "#F3CD23",
+    color: "#0D92F4",
     description: "만남 일정을 확인해주세요.",
-  },
-  isFaled: {
-    title: "연결 실패",
-    color: "#909196",
-    description: "상대방과의 연결이 성사되지 않았어요.",
   },
 };
 
@@ -42,9 +29,7 @@ interface MatchItemProps {
   id: number;
   name: string;
   isMyTicket: boolean;
-  isOpponentTicket: boolean;
   meetingStatus: number;
-  isFailed: boolean;
 }
 
 interface BadgeProps {
@@ -74,6 +59,10 @@ function Button({ color, id, meetingStatus, isMyTicket }: ButtonProps) {
     router.push(`/profile/${id}`);
   };
 
+  const handlePlan = () => {
+    router.push("/plan-overview");
+  };
+
   return (
     <>
       {!meetingStatus ? (
@@ -95,9 +84,12 @@ function Button({ color, id, meetingStatus, isMyTicket }: ButtonProps) {
       ) : meetingStatus === 1 ? (
         <View></View>
       ) : meetingStatus === 2 ? (
-        <View style={[styles.fullButtonGroup, { backgroundColor: color }]}>
-          <Text style={styles.buttonTitle}>일정 확인</Text>
-        </View>
+        <Pressable
+          style={[styles.fullButtonGroup, { backgroundColor: color }]}
+          onPress={handlePlan}
+        >
+          <Text style={styles.buttonTitle}>만남 일정 및 가이드</Text>
+        </Pressable>
       ) : (
         <View style={[styles.fullButtonGroup, { backgroundColor: color }]}>
           <Text style={styles.buttonTitle}>애프터 신청</Text>
@@ -112,8 +104,6 @@ export default function MatchItem({
   name,
   meetingStatus,
   isMyTicket,
-  isOpponentTicket,
-  isFailed,
 }: MatchItemProps) {
   const [label, setLabel] = useState("");
   const [color, setColor] = useState("");
@@ -121,20 +111,7 @@ export default function MatchItem({
 
   useEffect(() => {
     const getBableLabel = () => {
-      if (isFailed) {
-        setLabel(itemTarget?.isFaled?.title);
-        setColor(itemTarget?.isFaled?.color);
-        setDescription(itemTarget?.isFaled?.description);
-      } else if (!meetingStatus) {
-        setLabel(itemTarget?.waitingForConnection?.title);
-        setColor(itemTarget?.waitingForConnection?.color);
-
-        setDescription(
-          !isMyTicket
-            ? itemTarget?.waitingForConnection?.description?.connect
-            : itemTarget?.waitingForConnection?.description?.wait
-        );
-      } else if (meetingStatus === 1) {
+      if (meetingStatus === 1) {
         setLabel(itemTarget?.schedulingTheMeeting?.title);
         setColor(itemTarget?.schedulingTheMeeting?.color);
         setDescription(itemTarget?.schedulingTheMeeting?.description);
@@ -158,9 +135,6 @@ export default function MatchItem({
         <View style={styles.main01}>
           <View style={styles.badgeGroup}>
             <Badge label={label} color={color} />
-            <View style={[styles.badge, { backgroundColor: "#F95154" }]}>
-              <Text style={styles.badgeText}>상대방 티켓 사용</Text>
-            </View>
           </View>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.description}>{description}</Text>
@@ -237,6 +211,7 @@ const styles = StyleSheet.create({
     width: responsiveWidth(16),
     height: responsiveWidth(16),
     borderRadius: 5,
+    opacity: 0.2,
   },
 
   buttonContainer: {
@@ -250,7 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: theme.colors.primary,
-    paddingVertical: 12,
+    paddingVertical: responsiveHeight(100) > 854 ? 12 : 6,
     borderRadius: 50,
     marginTop: 8,
   },

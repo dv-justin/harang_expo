@@ -1,14 +1,14 @@
 export const theme = {
   colors: {
-    primary: "#3AA6B9",
-    primaryRgb30: "rgba(58, 166, 185, 0.3)",
-    primaryRgb20: "rgba(58, 166, 185, 0.2)",
-    sub: "#FF9EAA",
-    subRgb30: "rgba(255, 158, 170, 0.3)",
+    primary: "#134B70",
+    primaryRgb: "rgba(19, 75, 112, 0.8)",
+    background: "white",
+    white: "white",
+    sub: "#87CEEB",
+    subRgb30: "rgba(135, 206, 235, 0.3)",
     primaryText: "#36454F",
     subText: "#909196",
     inActiveText: "#6B6A6D",
-    white: "#FFFFFF",
     inActive: "#ECECEC",
   },
 };

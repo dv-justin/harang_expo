@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
 
   logoSubTitle: {
     fontSize: responsiveWidth(4),
-    color: "#FF9EAA",
+    color: theme.colors.sub,
     fontWeight: "700",
   },
 });

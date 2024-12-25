@@ -23,8 +23,6 @@ interface Tie {
   name: string;
   meetingStatus: number;
   isMyTicket: boolean;
-  isOpponentTicket: boolean;
-  isFailed: boolean;
 }
 
 export default function TieScreen() {
@@ -32,7 +30,6 @@ export default function TieScreen() {
 
   const [status, setStatus] = useState(false);
   const [ties, setTies] = useState<Tie[]>([]);
-  const [selectTies, setSelectTies] = useState<Tie[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const statusButtonClick = (statusValue: boolean) => {
@@ -81,58 +78,11 @@ export default function TieScreen() {
   }, []);
 
   useEffect(() => {
-    if (ties.length) {
-      setSelectTies(
-        ties.filter((tie) => {
-          return status ? tie?.meetingStatus : !tie?.meetingStatus;
-        })
-      );
-    }
-  }, [ties, status]);
-
-  useEffect(() => {
-    console.log("들어오니?");
     fetchData();
   }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable
-          style={[
-            styles.headerItem,
-            !status ? styles.selectHeaderItem : styles.unSelectHeaderItem,
-          ]}
-          onPress={() => statusButtonClick(false)}
-        >
-          <Text
-            style={[
-              !status
-                ? styles.selectHeaderItemTitle
-                : styles.unSelectHeaderItemTitle,
-            ]}
-          >
-            매칭
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.headerItem,
-            status ? styles.selectHeaderItem : styles.unSelectHeaderItem,
-          ]}
-          onPress={() => statusButtonClick(true)}
-        >
-          <Text
-            style={[
-              status
-                ? styles.selectHeaderItemTitle
-                : styles.unSelectHeaderItemTitle,
-            ]}
-          >
-            만남
-          </Text>
-        </Pressable>
-      </View>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
@@ -140,15 +90,13 @@ export default function TieScreen() {
         scrollIndicatorInsets={{ left: 20 }}
       >
         <View>
-          {selectTies.map((tie, index) => (
+          {ties.map((tie, index) => (
             <MatchItem
               key={index}
               id={tie?.id}
               name={tie?.name}
               isMyTicket={tie?.isMyTicket}
-              isOpponentTicket={tie?.isOpponentTicket}
               meetingStatus={tie.meetingStatus}
-              isFailed={tie.isFailed}
             />
           ))}
         </View>
@@ -161,40 +109,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: theme.colors.primaryRgb30,
+    backgroundColor: theme.colors.background,
     height: responsiveHeight(90),
     paddingBottom: responsiveHeight(10),
-  },
-  main: {
-    width: responsiveWidth(100),
-    height: responsiveHeight(72),
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerItem: {
-    width: responsiveWidth(50),
-    padding: responsiveWidth(4),
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  selectHeaderItem: {
-    backgroundColor: theme.colors.white,
-    borderBottomColor: theme.colors.primary,
-    borderBottomWidth: 3,
-  },
-  unSelectHeaderItem: {},
-  selectHeaderItemTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: theme.colors.primary,
-  },
-  unSelectHeaderItemTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: theme.colors.subText,
   },
 });

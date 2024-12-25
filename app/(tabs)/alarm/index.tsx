@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     height: responsiveHeight(100),
     paddingVertical: responsiveWidth(8),
     paddingHorizontal: responsiveWidth(5),
-    backgroundColor: theme.colors.primaryRgb30,
+    backgroundColor: theme.colors.background,
   },
   selectBar: {
     width: responsiveWidth(24),
@@ -77,12 +77,13 @@ const styles = StyleSheet.create({
   },
   alarmItem: {
     width: responsiveWidth(90),
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.primaryRgb,
     borderRadius: 10,
     paddingVertical: 16,
     paddingHorizontal: 14,
   },
   alarmTitle: {
     fontSize: 14,
+    color: theme.colors.white,
   },
 });
