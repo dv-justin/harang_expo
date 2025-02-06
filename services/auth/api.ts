@@ -7,20 +7,25 @@ export const getUserInfo = async (
   accessToken: string;
   refreshToken: string;
   status: string;
-}> => {
+} | null> => {
   try {
     const response = await apiClient.get(`/auth/phone-number/${phoneNumber}`);
-    const {
-      access_token: accessToken,
-      refresh_token: refreshToken,
-      status,
-    } = response.data;
 
-    return {
-      accessToken,
-      refreshToken,
-      status,
-    };
+    if (response?.data) {
+      const {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        status,
+      } = response.data;
+
+      return {
+        accessToken,
+        refreshToken,
+        status,
+      };
+    }
+
+    return null;
   } catch (error) {
     throw error;
   }

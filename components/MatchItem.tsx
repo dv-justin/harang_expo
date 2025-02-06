@@ -60,7 +60,11 @@ function Button({ color, id, meetingStatus, isMyTicket }: ButtonProps) {
   };
 
   const handlePlan = () => {
-    router.push("/plan-overview");
+    router.push(`/plan-overview?id=${id}`);
+  };
+
+  const handleAfter = () => {
+    router.push("/application-after");
   };
 
   return (
@@ -91,9 +95,12 @@ function Button({ color, id, meetingStatus, isMyTicket }: ButtonProps) {
           <Text style={styles.buttonTitle}>만남 일정 및 가이드</Text>
         </Pressable>
       ) : (
-        <View style={[styles.fullButtonGroup, { backgroundColor: color }]}>
+        <Pressable
+          style={[styles.fullButtonGroup, { backgroundColor: color }]}
+          onPress={handleAfter}
+        >
           <Text style={styles.buttonTitle}>애프터 신청</Text>
-        </View>
+        </Pressable>
       )}
     </>
   );

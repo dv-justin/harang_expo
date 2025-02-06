@@ -12,7 +12,7 @@ export default function PurityOnly() {
   const router = useRouter();
 
   const buttonClick = () => {
-    router.push("/certified-love-donation");
+    router.push("/meet-safely-local-church-cafe");
   };
 
   return (

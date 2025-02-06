@@ -1,6 +1,7 @@
 import { atom } from "recoil";
 
 export interface User {
+  id: number;
   birthDate: string;
   name: string;
   phoneNumber: string;
@@ -25,6 +26,7 @@ export interface User {
 }
 
 export const initialUserState: User = {
+  id: 0,
   status: "",
   birthDate: "",
   name: "",

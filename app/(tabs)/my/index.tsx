@@ -17,9 +17,10 @@ export default function MyScreen() {
   const clickItem = (type: string) => {
     if (type === "idealType") {
       router.push("/ideal-type");
+    } else if (type === "myProfile") {
+      router.push(`/profile/${user?.id}`);
     }
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.profile}>
@@ -45,9 +46,12 @@ export default function MyScreen() {
         >
           <Text style={styles.myTitle}>이상형</Text>
         </Pressable>
-        <View style={styles.contentItem}>
+        <Pressable
+          style={styles.contentItem}
+          onPress={() => clickItem("myProfile")}
+        >
           <Text style={styles.myTitle}>내 프로필</Text>
-        </View>
+        </Pressable>
       </View>
       <View style={styles.line}></View>
       <View style={styles.contentGroup}>
@@ -62,9 +66,6 @@ export default function MyScreen() {
         </View>
         <View style={styles.contentItem}>
           <Text style={styles.myTitle}>신고</Text>
-        </View>
-        <View style={styles.contentItem}>
-          <Text style={styles.myTitle}>연인인증</Text>
         </View>
       </View>
       <View style={styles.line}></View>

@@ -18,6 +18,7 @@ import { userAtom } from "@/atoms/user/userAtom";
 import { useRouter } from "expo-router";
 import { getUserInfo } from "@/services/auth/api";
 import { setAuthTokens } from "@/services/auth/auth";
+import { getUserIdToken } from "@/services/user/api";
 
 export default function SignUp() {
   const router = useRouter();
@@ -59,12 +60,56 @@ export default function SignUp() {
 
       try {
         const serverUser = await getUserInfo(phoneNumber);
-
         if (serverUser) {
           await setAuthTokens(
             serverUser?.accessToken,
             serverUser?.refreshToken
           );
+
+          const userValue = await getUserIdToken();
+          const {
+            id,
+            status,
+            name,
+            gender,
+            birthdate,
+            phoneNumber,
+            regionLevel1,
+            regionLevel2,
+            churchName,
+            pastorName,
+            schoolAndMajor,
+            companyName,
+            yourFaith,
+            influentialVerse,
+            prayerTopic,
+            vision,
+            coupleActivity,
+            expectedMeeting,
+            merit,
+          } = userValue;
+          setUser({
+            ...user,
+            id: id,
+            status: status,
+            name,
+            gender,
+            birthDate: birthdate,
+            phoneNumber,
+            regionLevel1,
+            regionLevel2,
+            churchName,
+            pastorName,
+            schoolAndMajor,
+            companyName,
+            yourFaith,
+            influentialVerse,
+            prayerTopic,
+            vision,
+            coupleActivity,
+            expectedMeeting,
+            merit,
+          });
 
           moveRouter(serverUser?.status);
 
@@ -74,6 +119,7 @@ export default function SignUp() {
           ...user,
           phoneNumber: phoneNumber,
         });
+        moveRouter();
       } catch (error) {
         router.replace("/error");
         return;
@@ -81,7 +127,7 @@ export default function SignUp() {
     }
   };
 
-  const moveRouter = (status: string | undefined) => {
+  const moveRouter = (status?: string) => {
     if (status === "심사 중") {
       router.push("/approval-pending");
       return;

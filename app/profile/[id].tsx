@@ -18,7 +18,7 @@ import {
 import { theme } from "@/constants/Theme";
 import calculateBirthdate from "../common/calculate-birthdate";
 
-export interface profile {
+export interface Profile {
   id: number;
   name: string;
   gender: string;
@@ -37,6 +37,9 @@ export interface profile {
   coupleActivity?: string;
   expectedMeeting?: string;
   merit?: string;
+  manUserTicketUsed: number;
+  femaleUserTicketUsed: number;
+  allTicketsUsedBy: string;
 }
 
 export default function UserProfile() {
@@ -46,7 +49,65 @@ export default function UserProfile() {
 
   const birthDate = useRef<number>();
 
-  const [profile, setProfile] = useState<profile>();
+  const [profile, setProfile] = useState<Profile>();
+  const [mainButtonText, setMainButtonText] = useState("");
+  const [subButtonText, setSubButtonText] = useState("");
+
+  const getButtonSubText = () => {
+    if (
+      !profile?.allTicketsUsedBy &&
+      !profile?.femaleUserTicketUsed &&
+      !profile?.manUserTicketUsed
+    ) {
+      return "이성이 맘에 든다면?";
+    } else if (
+      (!profile?.allTicketsUsedBy &&
+        profile?.gender === "man" &&
+        profile?.manUserTicketUsed) ||
+      (!profile?.allTicketsUsedBy &&
+        profile?.gender === "female" &&
+        profile?.femaleUserTicketUsed)
+    ) {
+      return "상대방이 티켓 사용을 했어요!";
+    } else if (
+      (profile?.gender === "man" && profile?.allTicketsUsedBy === "man") ||
+      (profile?.gender === "female" && profile?.allTicketsUsedBy === "female")
+    ) {
+      return "상대방이 김진수님 티켓까지 결제했어요";
+    } else if (
+      (!profile?.manUserTicketUsed && profile?.femaleUserTicketUsed) ||
+      (!profile?.femaleUserTicketUsed && profile?.manUserTicketUsed)
+    ) {
+      return "조금만 더 기다려주세요";
+    }
+
+    return "";
+  };
+
+  const getButtonMainText = () => {
+    if (
+      (!profile?.allTicketsUsedBy &&
+        profile?.gender === "female" &&
+        !profile?.manUserTicketUsed) ||
+      (!profile?.allTicketsUsedBy &&
+        profile?.gender === "man" &&
+        !profile?.femaleUserTicketUsed)
+    ) {
+      return "티켓 사용";
+    } else if (
+      (profile?.gender === "man" && profile?.allTicketsUsedBy === "man") ||
+      (profile?.gender === "female" && profile?.allTicketsUsedBy === "female")
+    ) {
+      return "무료 만남";
+    } else if (
+      (!profile?.manUserTicketUsed && profile?.femaleUserTicketUsed) ||
+      (!profile?.femaleUserTicketUsed && profile?.manUserTicketUsed)
+    ) {
+      return "상대방의 선택을 기다리고 있어요";
+    }
+
+    return "";
+  };
 
   async function handleUnauthorizedError(error: any) {
     if (error.status === 401) {
@@ -72,7 +133,6 @@ export default function UserProfile() {
   const fetchData = async () => {
     try {
       const userValue = await getUserId(Number(id));
-      setProfile(userValue);
 
       if (userValue) {
         setProfile(userValue);
@@ -92,132 +152,138 @@ export default function UserProfile() {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.profileImageGroup}>
-        <Image
-          style={styles.profileImage}
-          source={require("@/assets/images/profile.png")}
-        />
-        <Pressable
-          style={styles.backImageGroup}
-          onPress={handleBackClickButton}
-        >
+    <View style={styles.container}>
+      <ScrollView>
+        <View style={styles.profileImageGroup}>
           <Image
-            style={styles.backImage}
-            source={require("@/assets/images/back-white.png")}
+            style={styles.profileImage}
+            source={require("@/assets/images/profile.png")}
           />
-        </Pressable>
-      </View>
+          <Pressable
+            style={styles.backImageGroup}
+            onPress={handleBackClickButton}
+          >
+            <Image
+              style={styles.backImage}
+              source={require("@/assets/images/back-white.png")}
+            />
+          </Pressable>
+        </View>
 
-      <View style={styles.defaultInfoGroup}>
-        <Text>
-          <Text style={styles.nameAgeText}>{profile?.name} </Text>
-          <Text style={styles.nameAgeText}>{birthDate.current}</Text>
-        </Text>
+        <View style={styles.defaultInfoGroup}>
+          <Text>
+            <Text style={styles.nameAgeText}>{profile?.name} </Text>
+            <Text style={styles.nameAgeText}>{birthDate.current}</Text>
+          </Text>
 
-        <View style={styles.addInfoGroup}>
-          <Image
-            style={styles.addInfoImage}
-            source={require("@/assets/images/profile/region.png")}
-          />
-          <Text style={styles.addInfoText}>인천광역시</Text>
+          <View style={styles.addInfoGroup}>
+            <Image
+              style={styles.addInfoImage}
+              source={require("@/assets/images/profile/region.png")}
+            />
+            <Text style={styles.addInfoText}>인천광역시</Text>
+          </View>
+          <View style={styles.addInfoGroup}>
+            <Image
+              style={styles.addInfoImage}
+              source={require("@/assets/images/profile/school.png")}
+            />
+            <Text style={styles.addInfoText}>서울대/경영학과</Text>
+          </View>
+          <View style={styles.addInfoGroup}>
+            <Image
+              style={styles.addInfoImage}
+              source={require("@/assets/images/profile/job.png")}
+            />
+            <Text style={styles.addInfoText}>IT/개발자</Text>
+          </View>
         </View>
-        <View style={styles.addInfoGroup}>
-          <Image
-            style={styles.addInfoImage}
-            source={require("@/assets/images/profile/school.png")}
-          />
-          <Text style={styles.addInfoText}>서울대/경영학과</Text>
+        <View style={styles.infoGroup}>
+          <View style={styles.infoTitleGroup}>
+            <Image
+              style={styles.infoTitleIcon}
+              source={require("@/assets/images/profile/jesus.png")}
+            ></Image>
+            <Text style={styles.infoTitle}> 내가 만난 하나님</Text>
+          </View>
+          <View style={styles.infoContentsGroup}>
+            <Text style={styles.infoContent}>{profile?.yourFaith}</Text>
+          </View>
+          <View style={styles.infoTitleGroup}>
+            <Image
+              style={styles.infoTitleIcon}
+              source={require("@/assets/images/profile/bible.png")}
+            ></Image>
+            <Text style={styles.infoTitle}> 나의 인생에 영향을 준 성경</Text>
+          </View>
+          <View style={styles.infoContentsGroup}>
+            <Text style={styles.infoContent}>{profile?.influentialVerse}</Text>
+          </View>
+          <View style={styles.infoTitleGroup}>
+            <Image
+              style={styles.infoTitleIcon}
+              source={require("@/assets/images/profile/prayer.png")}
+            ></Image>
+            <Text style={styles.infoTitle}> 품고있는 기도제목</Text>
+          </View>
+          <View style={styles.infoContentsGroup}>
+            <Text style={styles.infoContent}>{profile?.prayerTopic}</Text>
+          </View>
+          <View style={styles.infoTitleGroup}>
+            <Image
+              style={styles.infoTitleIcon}
+              source={require("@/assets/images/profile/vision.png")}
+            ></Image>
+            <Text style={styles.infoTitle}> 주님안에서의 비전</Text>
+          </View>
+          <View style={styles.infoContentsGroup}>
+            <Text style={styles.infoContent}>{profile?.vision}</Text>
+          </View>
+          <View style={styles.infoTitleGroup}>
+            <Image
+              style={styles.infoTitleIcon}
+              source={require("@/assets/images/profile/couple.png")}
+            ></Image>
+            <Text style={styles.infoTitle}> 연인과 하고싶은 활동</Text>
+          </View>
+          <View style={styles.infoContentsGroup}>
+            <Text style={styles.infoContent}>{profile?.coupleActivity}</Text>
+          </View>
+          <View style={styles.infoTitleGroup}>
+            <Image
+              style={styles.infoTitleIcon}
+              source={require("@/assets/images/profile/expected.png")}
+            ></Image>
+            <Text style={styles.infoTitle}> 기대하는 만남</Text>
+          </View>
+          <View style={styles.infoContentsGroup}>
+            <Text style={styles.infoContent}>{profile?.expectedMeeting}</Text>
+          </View>
+          <View style={styles.infoTitleGroup}>
+            <Image
+              style={styles.infoTitleIcon}
+              source={require("@/assets/images/profile/merit.png")}
+            ></Image>
+            <Text style={styles.infoTitle}> 매력 혹은 장점</Text>
+          </View>
+          <View style={styles.infoContentsGroup}>
+            <Text style={styles.infoContent}>{profile?.merit}</Text>
+          </View>
         </View>
-        <View style={styles.addInfoGroup}>
-          <Image
-            style={styles.addInfoImage}
-            source={require("@/assets/images/profile/job.png")}
-          />
-          <Text style={styles.addInfoText}>IT/개발자</Text>
-        </View>
+      </ScrollView>
+      <View style={styles.useTicketButton}>
+        <Text style={styles.useTicketButtonSubText}>{getButtonSubText()}</Text>
+        <Text style={styles.useTicketButtonText}>{getButtonMainText()}</Text>
       </View>
-      <View style={styles.infoGroup}>
-        <View style={styles.infoTitleGroup}>
-          <Image
-            style={styles.infoTitleIcon}
-            source={require("@/assets/images/profile/jesus.png")}
-          ></Image>
-          <Text style={styles.infoTitle}> 내가 만난 하나님</Text>
-        </View>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.yourFaith}</Text>
-        </View>
-        <View style={styles.infoTitleGroup}>
-          <Image
-            style={styles.infoTitleIcon}
-            source={require("@/assets/images/profile/bible.png")}
-          ></Image>
-          <Text style={styles.infoTitle}> 나의 인생에 영향을 준 성경</Text>
-        </View>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.influentialVerse}</Text>
-        </View>
-        <View style={styles.infoTitleGroup}>
-          <Image
-            style={styles.infoTitleIcon}
-            source={require("@/assets/images/profile/prayer.png")}
-          ></Image>
-          <Text style={styles.infoTitle}> 품고있는 기도제목</Text>
-        </View>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.prayerTopic}</Text>
-        </View>
-        <View style={styles.infoTitleGroup}>
-          <Image
-            style={styles.infoTitleIcon}
-            source={require("@/assets/images/profile/vision.png")}
-          ></Image>
-          <Text style={styles.infoTitle}> 주님안에서의 비전</Text>
-        </View>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.vision}</Text>
-        </View>
-        <View style={styles.infoTitleGroup}>
-          <Image
-            style={styles.infoTitleIcon}
-            source={require("@/assets/images/profile/couple.png")}
-          ></Image>
-          <Text style={styles.infoTitle}> 연인과 하고싶은 활동</Text>
-        </View>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.coupleActivity}</Text>
-        </View>
-        <View style={styles.infoTitleGroup}>
-          <Image
-            style={styles.infoTitleIcon}
-            source={require("@/assets/images/profile/expected.png")}
-          ></Image>
-          <Text style={styles.infoTitle}> 기대하는 만남</Text>
-        </View>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.expectedMeeting}</Text>
-        </View>
-        <View style={styles.infoTitleGroup}>
-          <Image
-            style={styles.infoTitleIcon}
-            source={require("@/assets/images/profile/merit.png")}
-          ></Image>
-          <Text style={styles.infoTitle}> 매력 혹은 장점</Text>
-        </View>
-        <View style={styles.infoContentsGroup}>
-          <Text style={styles.infoContent}>{profile?.merit}</Text>
-        </View>
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     width: responsiveWidth(100),
-    height: responsiveHeight(100),
     backgroundColor: theme.colors.white,
+    position: "relative",
   },
   backImageGroup: {
     position: "absolute",
@@ -293,6 +359,30 @@ const styles = StyleSheet.create({
   infoContent: {
     color: "#666F7B",
     fontSize: 18,
+    fontWeight: "700",
+  },
+
+  useTicketButton: {
+    position: "absolute",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    width: responsiveWidth(90),
+    height: responsiveHeight(8.8),
+    borderRadius: 10,
+    marginLeft: responsiveWidth(5),
+    backgroundColor: theme.colors.primary,
+    bottom: 10,
+  },
+  useTicketButtonText: {
+    fontSize: 20,
+    color: theme.colors.white,
+    fontWeight: "700",
+    paddingTop: 4,
+  },
+  useTicketButtonSubText: {
+    fontSize: 18,
+    color: theme.colors.sub,
     fontWeight: "700",
   },
 });

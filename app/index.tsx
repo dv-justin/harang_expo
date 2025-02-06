@@ -42,6 +42,7 @@ export default function Landing() {
           const userValue = await getUserIdToken();
           userStatus = userValue?.status;
           const {
+            id,
             status,
             name,
             gender,
@@ -63,6 +64,7 @@ export default function Landing() {
           } = userValue;
           setUser({
             ...user,
+            id: id,
             status: status,
             name,
             gender,
@@ -86,7 +88,6 @@ export default function Landing() {
           moveRouter(userStatus);
           return;
         }
-
         setUser(initialUserState);
         moveRouter(userStatus);
       } catch (error: any) {

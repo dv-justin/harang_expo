@@ -3,7 +3,7 @@ import apiClient from "../api.client";
 
 export const getUserId = async (userId: number) => {
   try {
-    const response = await apiClient.get(`/users/${userId}`);
+    const response = await apiClient.get(`/users/${userId}?include_match=true`);
     return response.data;
   } catch (error) {
     throw error;

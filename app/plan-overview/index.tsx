@@ -1,13 +1,25 @@
 import Button from "@/components/Button";
 import { theme } from "@/constants/Theme";
-import { router } from "expo-router";
-import React from "react";
+import { refreshAccessToken } from "@/services/auth/api";
+import { getRefreshToken, setAccessToken } from "@/services/auth/auth";
+import { getTieMeeting } from "@/services/tie/api";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+
+export interface Meeting {
+  meetingAddress: string;
+  meetingLocation: string;
+  meetingSchedule: string;
+}
+
 export default function PlanOverview() {
+  const { id } = useLocalSearchParams();
+  const [meeting, setMeeting] = useState<Meeting>();
   const handleBackClickButton = () => {
     router.back();
   };
@@ -15,6 +27,43 @@ export default function PlanOverview() {
   const handleButton = () => {
     router.push("/plan-overview/meeting-guide");
   };
+
+  async function handleUnauthorizedError(error: any) {
+    if (error.status === 401) {
+      const refreshToken = await getRefreshToken();
+      if (refreshToken) {
+        try {
+          const { access_token: accessToken } = await refreshAccessToken(
+            refreshToken
+          );
+          await setAccessToken(accessToken);
+          await fetchData();
+        } catch (refreshError: any) {
+          router.replace("/auth");
+        }
+        return;
+      }
+
+      router.replace("/auth");
+    }
+    router.replace("/error");
+  }
+
+  const fetchData = async () => {
+    try {
+      const meetingValue = await getTieMeeting(Number(id));
+
+      if (meetingValue) {
+        setMeeting(meetingValue);
+      }
+    } catch (error: any) {
+      handleUnauthorizedError(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -26,13 +75,9 @@ export default function PlanOverview() {
       </Pressable>
       <Text style={styles.planTitle}>만남 일정</Text>
       <View style={styles.planGroup}>
-        <Text style={styles.planContent}>일시: 2024년 7월 24일</Text>
-        <Text style={styles.planContent}>
-          장소: 소금밭카페(수원 빛들로 교회)
-        </Text>
-        <Text style={styles.planContent}>
-          주소: 경기도 수원시 금당로 24 야아빌라 1층
-        </Text>
+        <Text style={styles.planContent}>일시: {meeting?.meetingSchedule}</Text>
+        <Text style={styles.planContent}>장소: {meeting?.meetingLocation}</Text>
+        <Text style={styles.planContent}>주소: {meeting?.meetingAddress}</Text>
       </View>
       <View style={styles.locationGroup}>
         <Text style={styles.planTitle}>만남 위치</Text>

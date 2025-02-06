@@ -32,7 +32,7 @@ export default function MeetSafelyLocalChurchCafe() {
       <View style={styles.titleGroup}>
         <Text>
           <Text style={[styles.title, styles.mainColor]}>
-            교회에서 운영하는 카페
+            카페
           </Text>
           <Text style={[styles.title, styles.subColor]}>에서</Text>
         </Text>

@@ -21,6 +21,7 @@ import {
   GestureHandlerRootView,
   Pressable,
 } from "react-native-gesture-handler";
+import GestureRecognizer from "react-native-swipe-gestures";
 
 interface Home {
   id: string;
@@ -85,49 +86,56 @@ export default function HomeScreen() {
   }, []);
   return (
     <GestureHandlerRootView>
-      <ScrollView
-        style={styles.container}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
-      >
-        {home?.name ? (
-          <View style={styles.introductionGroup}>
-            <Image
-              style={styles.letterImage}
-              resizeMode="contain"
-              source={require("@/assets/images/letter.png")}
+      <View style={styles.container}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
             />
-            <Text style={styles.introductionText}>소개가 도착했어요</Text>
-            <Text style={styles.introductionSubText}>
-              24시간 이내로 선택 부탁드려요
-            </Text>
-            <Pressable onPress={getProfile}>
+          }
+        >
+          {home?.name ? (
+            <View style={styles.introductionGroup}>
               <Image
-                style={styles.profileImage}
-                source={require("@/assets/images/profile.png")}
+                style={styles.letterImage}
+                resizeMode="contain"
+                source={require("@/assets/images/letter.png")}
               />
-            </Pressable>
-            <View style={styles.infoGroup}>
-              <Text style={styles.infoText}>
-                {maskMiddleName(home?.name)} {home?.birthdate}
+              <Text style={styles.introductionText}>소개가 도착했어요</Text>
+              <Text style={styles.introductionSubText}>
+                24시간 이내로 선택 부탁드려요
               </Text>
-              <Text style={styles.infoText}>{home?.address} </Text>
+              <Pressable onPress={getProfile}>
+                <Image
+                  style={styles.profileImage}
+                  source={require("@/assets/images/profile.png")}
+                />
+              </Pressable>
+              <View style={styles.infoGroup}>
+                <Text style={styles.infoText}>
+                  {maskMiddleName(home?.name)} {home?.birthdate}
+                </Text>
+                <Text style={styles.infoText}>{home?.address} </Text>
+              </View>
             </View>
-          </View>
-        ) : (
-          <View style={styles.lookingFor}>
-            <Text style={styles.lookingForText}>매니저가 좋은 인연을</Text>
-            <Text style={styles.lookingForText}>찾고있는 중이에요!</Text>
-          </View>
-        )}
-      </ScrollView>
-      <View style={styles.introductionGuideGroup}>
-        <Text style={styles.introductionGuideTitle}>하랑 소개 가이드</Text>
-        <Image
-          style={styles.nextImage}
-          source={require("@/assets/images/next.png")}
-        />
+          ) : (
+            <View style={styles.lookingFor}>
+              <Text style={styles.lookingForText}>매니저가 좋은 인연을</Text>
+              <Text style={styles.lookingForText}>찾고있는 중이에요!</Text>
+            </View>
+          )}
+        </ScrollView>
+        <View style={styles.completeBadgeGroup}>
+          <Text style={styles.completeBadgeTitle}>꼭 확인해주세요!</Text>
+        </View>
+        <View style={styles.introductionGuideGroup}>
+          <Text style={styles.introductionGuideTitle}>하랑 소개 가이드</Text>
+          <Image
+            style={styles.nextImage}
+            source={require("@/assets/images/next.png")}
+          />
+        </View>
       </View>
     </GestureHandlerRootView>
   );
@@ -141,6 +149,11 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     paddingLeft: responsiveWidth(5),
     paddingTop: responsiveHeight(4),
+  },
+  slideContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   lookingFor: {
@@ -221,6 +234,19 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  completeBadgeGroup: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: responsiveWidth(30),
+    height: 24,
+    backgroundColor: theme.colors.sub,
+    borderRadius: 10,
+  },
+  completeBadgeTitle: {
+    color: theme.colors.white,
+    fontWeight: "700",
+  },
 
   introductionGuideGroup: {
     flexDirection: "row",
@@ -231,7 +257,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primaryRgb,
     borderRadius: 10,
     marginBottom: responsiveHeight(2),
-    marginLeft: responsiveWidth(5),
     paddingHorizontal: 24,
   },
   introductionGuideTitle: {
