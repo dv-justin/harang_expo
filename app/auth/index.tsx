@@ -19,7 +19,7 @@ export default function Auth() {
     <View style={styles.container}>
       <View style={styles.bannerGroup}>
         <Text style={[styles.bannerTitle, styles.subColor]}>
-          하나님을 바라보는
+          하나님을 사랑하는
         </Text>
         <Text style={[styles.bannerTitle, styles.subColor]}>
           인연을 만나려면?
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
 
   logoSubTitle: {
     fontSize: responsiveWidth(4),
-    color: "#FF9EAA",
+    color: theme.colors.sub,
     fontWeight: "700",
   },
 });

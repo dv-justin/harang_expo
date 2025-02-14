@@ -1,5 +1,7 @@
 import MatchItem from "@/components/MatchItem";
 import { theme } from "@/constants/Theme";
+import { refreshAccessToken } from "@/services/auth/api";
+import { getRefreshToken, setAccessToken } from "@/services/auth/auth";
 import { getTies } from "@/services/tie/api";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -18,20 +20,9 @@ import {
 
 interface Tie {
   id: number;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
-  meeting_date: string | null;
-  meeting_status: number;
-  man_user: {
-    id: number;
-  };
-  female_user: {
-    id: number;
-  };
-  man_user_ticket_used: boolean;
-  female_user_ticket_used: boolean;
-  is_failed: boolean;
+  name: string;
+  meetingStatus: number;
+  isMyTicket: boolean;
 }
 
 export default function TieScreen() {
@@ -39,7 +30,6 @@ export default function TieScreen() {
 
   const [status, setStatus] = useState(false);
   const [ties, setTies] = useState<Tie[]>([]);
-  const [selectTies, setSelectTies] = useState<Tie[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const statusButtonClick = (statusValue: boolean) => {
@@ -47,14 +37,37 @@ export default function TieScreen() {
     return;
   };
 
-  const fetchData = async (isRefresh = false) => {
+  async function handleUnauthorizedError(error: any) {
+    if (error.status === 401) {
+      const refreshToken = await getRefreshToken();
+
+      if (refreshToken) {
+        try {
+          const { access_token: accessToken } = await refreshAccessToken(
+            refreshToken
+          );
+          await setAccessToken(accessToken);
+          await fetchData();
+        } catch (refreshError: any) {
+          console.error("Failed to refresh access token:", refreshError);
+          router.replace("/auth");
+        }
+        return;
+      }
+
+      router.replace("/auth");
+    }
+    router.replace("/error");
+  }
+
+  const fetchData = async () => {
     try {
       const tiesValue = await getTies();
       if (tiesValue) {
         setTies(tiesValue);
       }
-    } catch (error) {
-      console.error("데이터 요청 실패:", error);
+    } catch (error: any) {
+      handleUnauthorizedError(error);
     }
   };
 
@@ -65,57 +78,11 @@ export default function TieScreen() {
   }, []);
 
   useEffect(() => {
-    if (ties.length) {
-      setSelectTies(
-        ties.filter((tie) => {
-          return status ? tie?.meeting_status : !tie?.meeting_status;
-        })
-      );
-    }
-  }, [ties, status]);
-
-  useEffect(() => {
     fetchData();
   }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable
-          style={[
-            styles.headerItem,
-            !status ? styles.selectHeaderItem : styles.unSelectHeaderItem,
-          ]}
-          onPress={() => statusButtonClick(false)}
-        >
-          <Text
-            style={[
-              !status
-                ? styles.selectHeaderItemTitle
-                : styles.unSelectHeaderItemTitle,
-            ]}
-          >
-            매칭
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[
-            styles.headerItem,
-            status ? styles.selectHeaderItem : styles.unSelectHeaderItem,
-          ]}
-          onPress={() => statusButtonClick(true)}
-        >
-          <Text
-            style={[
-              status
-                ? styles.selectHeaderItemTitle
-                : styles.unSelectHeaderItemTitle,
-            ]}
-          >
-            만남
-          </Text>
-        </Pressable>
-      </View>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
@@ -123,16 +90,13 @@ export default function TieScreen() {
         scrollIndicatorInsets={{ left: 20 }}
       >
         <View>
-          {selectTies.map((tie, index) => (
+          {ties.map((tie, index) => (
             <MatchItem
               key={index}
-              name="김진수"
-              gender="man"
-              manUserTicketUsed={tie.man_user_ticket_used}
-              femaleUserTicketUsed={tie.female_user_ticket_used}
-              meetingStatus={tie.meeting_status}
-              checkTicket={false}
-              isFailed={tie.is_failed}
+              id={tie?.id}
+              name={tie?.name}
+              isMyTicket={tie?.isMyTicket}
+              meetingStatus={tie.meetingStatus}
             />
           ))}
         </View>
@@ -145,40 +109,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: theme.colors.primaryRgb20,
+    backgroundColor: theme.colors.background,
     height: responsiveHeight(90),
     paddingBottom: responsiveHeight(10),
-  },
-  main: {
-    width: responsiveWidth(100),
-    height: responsiveHeight(72),
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerItem: {
-    width: responsiveWidth(50),
-    padding: responsiveWidth(4),
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  selectHeaderItem: {
-    backgroundColor: theme.colors.white,
-    borderBottomColor: theme.colors.primary,
-    borderBottomWidth: 3,
-  },
-  unSelectHeaderItem: {},
-  selectHeaderItemTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: theme.colors.primary,
-  },
-  unSelectHeaderItemTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: theme.colors.subText,
   },
 });

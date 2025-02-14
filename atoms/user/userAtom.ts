@@ -1,9 +1,11 @@
 import { atom } from "recoil";
 
 export interface User {
+  id: number;
   birthDate: string;
   name: string;
   phoneNumber: string;
+  gender: string;
   regionLevel1: string;
   regionLevel2: string;
   churchName: string;
@@ -23,27 +25,32 @@ export interface User {
   status?: string;
 }
 
+export const initialUserState: User = {
+  id: 0,
+  status: "",
+  birthDate: "",
+  name: "",
+  gender: "",
+  phoneNumber: "",
+  regionLevel1: "",
+  regionLevel2: "",
+  churchName: "",
+  pastorName: "",
+  schoolAndMajor: "",
+  companyName: "",
+  yourFaith: "",
+  influentialVerse: "",
+  prayerTopic: "",
+  vision: "",
+  coupleActivity: "",
+  expectedMeeting: "",
+  merit: "",
+  profileImage: [],
+  idealTypeAge: "",
+  idealTypeDistance: 0,
+};
+
 export const userAtom = atom<User>({
   key: "userState",
-  default: {
-    birthDate: "",
-    name: "",
-    phoneNumber: "",
-    regionLevel1: "",
-    regionLevel2: "",
-    churchName: "",
-    pastorName: "",
-    schoolAndMajor: "",
-    companyName: "",
-    yourFaith: "",
-    influentialVerse: "",
-    prayerTopic: "",
-    vision: "",
-    coupleActivity: "",
-    expectedMeeting: "",
-    merit: "",
-    profileImage: [],
-    idealTypeAge: "",
-    idealTypeDistance: 0,
-  },
+  default: initialUserState,
 });

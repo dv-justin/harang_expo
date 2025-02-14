@@ -35,7 +35,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="tie/index"
         options={{
-          title: "인연",
+          title: "만남",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "heart" : "heart-outline"}

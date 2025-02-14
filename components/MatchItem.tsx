@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { theme } from "@/constants/Theme";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+import { useRouter } from "expo-router";
 
 const itemTarget = {
-  waitingForConnection: {
-    title: "연결 대기중",
-    color: "#ADD899",
-    description: {
-      wait: "상대방 선택을 기다려주세요.",
-      connect: "바로 만남이 가능해요!",
-    },
-  },
   meetingCompleted: {
     title: "만남 완료",
     color: "#3AA6B9",
@@ -27,41 +20,31 @@ const itemTarget = {
   },
   meetingConfirmed: {
     title: "만남 확정",
-    color: "#F3CD23",
+    color: "#0D92F4",
     description: "만남 일정을 확인해주세요.",
-  },
-  isFaled: {
-    title: "연결 실패",
-    color: "#909196",
-    description: "상대방과의 연결이 성사되지 않았어요.",
   },
 };
 
 interface MatchItemProps {
+  id: number;
   name: string;
-  gender: string;
-  manUserTicketUsed: boolean;
-  femaleUserTicketUsed: boolean;
+  isMyTicket: boolean;
   meetingStatus: number;
-  checkTicket: boolean;
-  isFailed: boolean;
 }
 
 interface BadgeProps {
   label: string;
   color: string;
-  checkTicket: boolean;
 }
 
 interface ButtonProps {
-  gender: string;
   color: string;
+  id: number;
   meetingStatus: number;
-  manUserTicketUsed: boolean;
-  femaleUserTicketUsed: boolean;
+  isMyTicket: boolean;
 }
 
-function Badge({ label, color, checkTicket }: BadgeProps) {
+function Badge({ label, color }: BadgeProps) {
   return (
     <View style={[styles.badge, { backgroundColor: color }]}>
       <Text style={styles.badgeText}>{label}</Text>
@@ -69,53 +52,65 @@ function Badge({ label, color, checkTicket }: BadgeProps) {
   );
 }
 
-function Button({
-  gender,
-  color,
-  meetingStatus,
-  manUserTicketUsed,
-  femaleUserTicketUsed,
-}: ButtonProps) {
+function Button({ color, id, meetingStatus, isMyTicket }: ButtonProps) {
+  const router = useRouter();
+
+  const getProfile = () => {
+    router.push(`/profile/${id}`);
+  };
+
+  const handlePlan = () => {
+    router.push(`/plan-overview?id=${id}`);
+  };
+
+  const handleAfter = () => {
+    router.push("/application-after");
+  };
+
   return (
     <>
       {!meetingStatus ? (
-        (gender === "man" && !manUserTicketUsed) ||
-        (gender === "female" && !femaleUserTicketUsed) ? (
+        !isMyTicket ? (
           <View style={styles.buttonContainer}>
-            <View style={[styles.buttonGroup, { backgroundColor: color }]}>
+            <Pressable
+              style={[styles.buttonGroup, { backgroundColor: color }]}
+              onPress={getProfile}
+            >
               <Text style={styles.buttonTitle}>프로필 확인</Text>
-            </View>
+            </Pressable>
             <View style={[styles.buttonGroup, { backgroundColor: color }]}>
               <Text style={styles.buttonTitle}>바로 만나기</Text>
             </View>
           </View>
         ) : (
-          ((gender === "man" && manUserTicketUsed) ||
-            (gender === "female" && femaleUserTicketUsed)) && <View></View>
+          isMyTicket && <View></View>
         )
       ) : meetingStatus === 1 ? (
         <View></View>
       ) : meetingStatus === 2 ? (
-        <View style={[styles.fullButtonGroup, { backgroundColor: color }]}>
-          <Text style={styles.buttonTitle}>일정 확인</Text>
-        </View>
+        <Pressable
+          style={[styles.fullButtonGroup, { backgroundColor: color }]}
+          onPress={handlePlan}
+        >
+          <Text style={styles.buttonTitle}>만남 일정 및 가이드</Text>
+        </Pressable>
       ) : (
-        <View style={[styles.fullButtonGroup, { backgroundColor: color }]}>
+        <Pressable
+          style={[styles.fullButtonGroup, { backgroundColor: color }]}
+          onPress={handleAfter}
+        >
           <Text style={styles.buttonTitle}>애프터 신청</Text>
-        </View>
+        </Pressable>
       )}
     </>
   );
 }
 
 export default function MatchItem({
+  id,
   name,
-  gender,
-  manUserTicketUsed,
-  femaleUserTicketUsed,
   meetingStatus,
-  checkTicket,
-  isFailed,
+  isMyTicket,
 }: MatchItemProps) {
   const [label, setLabel] = useState("");
   const [color, setColor] = useState("");
@@ -123,21 +118,7 @@ export default function MatchItem({
 
   useEffect(() => {
     const getBableLabel = () => {
-      if (isFailed) {
-        setLabel(itemTarget?.isFaled?.title);
-        setColor(itemTarget?.isFaled?.color);
-        setDescription(itemTarget?.isFaled?.description);
-      } else if (!meetingStatus) {
-        setLabel(itemTarget?.waitingForConnection?.title);
-        setColor(itemTarget?.waitingForConnection?.color);
-
-        setDescription(
-          (gender === "man" && !manUserTicketUsed) ||
-            (gender === "female" && !femaleUserTicketUsed)
-            ? itemTarget?.waitingForConnection?.description?.connect
-            : itemTarget?.waitingForConnection?.description?.wait
-        );
-      } else if (meetingStatus === 1) {
+      if (meetingStatus === 1) {
         setLabel(itemTarget?.schedulingTheMeeting?.title);
         setColor(itemTarget?.schedulingTheMeeting?.color);
         setDescription(itemTarget?.schedulingTheMeeting?.description);
@@ -160,7 +141,7 @@ export default function MatchItem({
       <View style={styles.main}>
         <View style={styles.main01}>
           <View style={styles.badgeGroup}>
-            <Badge label={label} color={color} checkTicket={checkTicket} />
+            <Badge label={label} color={color} />
           </View>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.description}>{description}</Text>
@@ -174,10 +155,9 @@ export default function MatchItem({
       </View>
       <Button
         color={color}
-        gender={gender}
+        id={id}
         meetingStatus={meetingStatus}
-        manUserTicketUsed={manUserTicketUsed}
-        femaleUserTicketUsed={femaleUserTicketUsed}
+        isMyTicket={isMyTicket}
       />
     </View>
   );
@@ -238,6 +218,7 @@ const styles = StyleSheet.create({
     width: responsiveWidth(16),
     height: responsiveWidth(16),
     borderRadius: 5,
+    opacity: 0.2,
   },
 
   buttonContainer: {
@@ -251,7 +232,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: theme.colors.primary,
-    paddingVertical: 12,
+    paddingVertical: responsiveHeight(100) > 854 ? 12 : 6,
     borderRadius: 50,
     marginTop: 8,
   },
@@ -261,7 +242,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: theme.colors.primary,
-    paddingVertical: 12,
+    paddingVertical: responsiveHeight(100) > 854 ? 12 : 6,
     borderRadius: 50,
     marginTop: 8,
   },

@@ -7,18 +7,95 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { getAccessToken } from "@/services/auth/auth";
+import { getAccessToken, getRefreshToken } from "@/services/auth/auth";
+import { getUserIdToken } from "@/services/user/api";
+import { useRecoilState } from "recoil";
+import { initialUserState, userAtom } from "@/atoms/user/userAtom";
 
 export default function Landing() {
   const router = useRouter();
+
+  const [user, setUser] = useRecoilState(userAtom);
+
+  const moveRouter = (status: string | undefined) => {
+    if (status === "심사 중") {
+      router.push("/approval-pending");
+      return;
+    } else if (status === "정상") {
+      router.push("/(tabs)");
+      return;
+    } else if (status === "반려") {
+      router.push("/companion");
+      return;
+    }
+
+    router.push("/auth");
+  };
 
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
         const accessToken = await getAccessToken();
-        router.push(`/${accessToken ? "(tabs)" : "auth"}`);
-      } catch (error) {
-        router.push("/auth");
+
+        let userStatus: string | undefined;
+        if (accessToken) {
+          const userValue = await getUserIdToken();
+          userStatus = userValue?.status;
+          const {
+            id,
+            status,
+            name,
+            gender,
+            birthdate,
+            phoneNumber,
+            regionLevel1,
+            regionLevel2,
+            churchName,
+            pastorName,
+            schoolAndMajor,
+            companyName,
+            yourFaith,
+            influentialVerse,
+            prayerTopic,
+            vision,
+            coupleActivity,
+            expectedMeeting,
+            merit,
+          } = userValue;
+          setUser({
+            ...user,
+            id: id,
+            status: status,
+            name,
+            gender,
+            birthDate: birthdate,
+            phoneNumber,
+            regionLevel1,
+            regionLevel2,
+            churchName,
+            pastorName,
+            schoolAndMajor,
+            companyName,
+            yourFaith,
+            influentialVerse,
+            prayerTopic,
+            vision,
+            coupleActivity,
+            expectedMeeting,
+            merit,
+          });
+
+          moveRouter(userStatus);
+          return;
+        }
+        setUser(initialUserState);
+        moveRouter(userStatus);
+      } catch (error: any) {
+        if (error.status === 401) {
+          router.replace("/auth");
+          return;
+        }
+        router.replace("/error");
       }
     };
 
