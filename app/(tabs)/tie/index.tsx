@@ -23,6 +23,8 @@ interface Tie {
   name: string;
   meetingStatus: number;
   isMyTicket: boolean;
+  isMyAfter: boolean;
+  isYourAfter: boolean;
 }
 
 export default function TieScreen() {
@@ -63,6 +65,7 @@ export default function TieScreen() {
   const fetchData = async () => {
     try {
       const tiesValue = await getTies();
+
       if (tiesValue) {
         setTies(tiesValue);
       }
@@ -96,6 +99,8 @@ export default function TieScreen() {
               id={tie?.id}
               name={tie?.name}
               isMyTicket={tie?.isMyTicket}
+              isMyAfter={tie?.isMyAfter}
+              isYourAfter={tie?.isYourAfter}
               meetingStatus={tie.meetingStatus}
             />
           ))}
