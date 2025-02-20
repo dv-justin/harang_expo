@@ -67,6 +67,7 @@ export default function SignUp() {
           );
 
           const userValue = await getUserIdToken();
+
           const {
             id,
             status,
@@ -111,10 +112,11 @@ export default function SignUp() {
             merit,
           });
 
-          moveRouter(serverUser?.status);
+          moveRouter(userValue?.status);
 
           return;
         }
+
         setUser({
           ...user,
           phoneNumber: phoneNumber,

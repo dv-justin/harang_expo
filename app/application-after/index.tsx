@@ -17,11 +17,8 @@ import {
 
 export default function ApplicationAfter() {
   const router = useRouter();
-  const handleButton = (success: boolean) => {
-    if (!success) {
-      return router.push("/(tabs)/tie");
-    }
-    router.push("/application-after/success-application-after");
+  const handleButton = () => {
+    return router.push("/(tabs)/tie");
   };
   return (
     <View style={styles.container}>
@@ -30,7 +27,7 @@ export default function ApplicationAfter() {
       <View style={styles.selectButtonGroup}>
         <Pressable
           style={[styles.selectButton, styles.primaryBackgroundColor]}
-          onPress={() => handleButton(true)}
+          onPress={handleButton}
         >
           <Text style={styles.buttonTitle}>
             맘에 들었어요 애프터 신청할게요!

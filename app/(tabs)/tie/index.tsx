@@ -23,6 +23,8 @@ interface Tie {
   name: string;
   meetingStatus: number;
   isMyTicket: boolean;
+  isMyAfter: boolean;
+  isYourAfter: boolean;
 }
 
 export default function TieScreen() {
@@ -96,7 +98,9 @@ export default function TieScreen() {
               id={tie?.id}
               name={tie?.name}
               isMyTicket={tie?.isMyTicket}
-              meetingStatus={tie.meetingStatus}
+              isMyAfter={tie?.isMyAfter}
+              isYourAfter={tie?.isYourAfter}
+              meetingStatus={tie?.meetingStatus}
             />
           ))}
         </View>

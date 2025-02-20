@@ -28,8 +28,10 @@ const itemTarget = {
 interface MatchItemProps {
   id: number;
   name: string;
-  isMyTicket: boolean;
   meetingStatus: number;
+  isMyTicket: boolean;
+  isMyAfter: boolean;
+  isYourAfter: boolean;
 }
 
 interface BadgeProps {
@@ -42,6 +44,8 @@ interface ButtonProps {
   id: number;
   meetingStatus: number;
   isMyTicket: boolean;
+  isMyAfter: boolean;
+  isYourAfter: boolean;
 }
 
 function Badge({ label, color }: BadgeProps) {
@@ -52,7 +56,14 @@ function Badge({ label, color }: BadgeProps) {
   );
 }
 
-function Button({ color, id, meetingStatus, isMyTicket }: ButtonProps) {
+function Button({
+  color,
+  id,
+  meetingStatus,
+  isMyTicket,
+  isMyAfter,
+  isYourAfter,
+}: ButtonProps) {
   const router = useRouter();
 
   const getProfile = () => {
@@ -64,6 +75,10 @@ function Button({ color, id, meetingStatus, isMyTicket }: ButtonProps) {
   };
 
   const handleAfter = () => {
+    if (isMyAfter && isYourAfter) {
+      router.push("/success-application-after");
+      return;
+    }
     router.push("/application-after");
   };
 
@@ -94,12 +109,16 @@ function Button({ color, id, meetingStatus, isMyTicket }: ButtonProps) {
         >
           <Text style={styles.buttonTitle}>만남 일정 및 가이드</Text>
         </Pressable>
+      ) : isMyAfter && !isYourAfter ? (
+        <View></View>
       ) : (
         <Pressable
           style={[styles.fullButtonGroup, { backgroundColor: color }]}
           onPress={handleAfter}
         >
-          <Text style={styles.buttonTitle}>애프터 신청</Text>
+          <Text style={styles.buttonTitle}>
+            {isMyAfter && isYourAfter ? "연락처 확인하기" : "애프터 신청"}
+          </Text>
         </Pressable>
       )}
     </>
@@ -111,6 +130,8 @@ export default function MatchItem({
   name,
   meetingStatus,
   isMyTicket,
+  isMyAfter,
+  isYourAfter,
 }: MatchItemProps) {
   const [label, setLabel] = useState("");
   const [color, setColor] = useState("");
@@ -129,7 +150,16 @@ export default function MatchItem({
       } else if (meetingStatus === 3) {
         setLabel(itemTarget?.meetingCompleted?.title);
         setColor(itemTarget?.meetingCompleted?.color);
-        setDescription(itemTarget?.meetingCompleted?.description);
+
+        if (!isMyAfter && !isYourAfter) {
+          setDescription(itemTarget?.meetingCompleted?.description);
+        } else if (isMyAfter && !isYourAfter) {
+          setDescription("상대방의 신청을 조금만 기다려주세요!");
+        } else if (!isMyAfter && isYourAfter) {
+          setDescription("상대방이 애프터 신청을 보냈어요!");
+        } else if (isMyAfter && isYourAfter) {
+          setDescription("축하합니다! 상대방과 연결이 되었습니다!");
+        }
       }
     };
 
@@ -158,6 +188,8 @@ export default function MatchItem({
         id={id}
         meetingStatus={meetingStatus}
         isMyTicket={isMyTicket}
+        isMyAfter={isMyAfter}
+        isYourAfter={isYourAfter}
       />
     </View>
   );
