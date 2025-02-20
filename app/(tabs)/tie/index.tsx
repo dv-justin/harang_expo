@@ -65,7 +65,6 @@ export default function TieScreen() {
   const fetchData = async () => {
     try {
       const tiesValue = await getTies();
-
       if (tiesValue) {
         setTies(tiesValue);
       }
@@ -101,7 +100,7 @@ export default function TieScreen() {
               isMyTicket={tie?.isMyTicket}
               isMyAfter={tie?.isMyAfter}
               isYourAfter={tie?.isYourAfter}
-              meetingStatus={tie.meetingStatus}
+              meetingStatus={tie?.meetingStatus}
             />
           ))}
         </View>
