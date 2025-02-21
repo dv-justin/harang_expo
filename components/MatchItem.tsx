@@ -43,7 +43,6 @@ interface ButtonProps {
   color: string;
   id: number;
   meetingStatus: number;
-  isMyTicket: boolean;
   isMyAfter: boolean;
   isYourAfter: boolean;
 }
@@ -60,15 +59,10 @@ function Button({
   color,
   id,
   meetingStatus,
-  isMyTicket,
   isMyAfter,
   isYourAfter,
 }: ButtonProps) {
   const router = useRouter();
-
-  const getProfile = () => {
-    router.push(`/profile/${id}`);
-  };
 
   const handlePlan = () => {
     router.push(`/plan-overview?id=${id}`);
@@ -79,28 +73,12 @@ function Button({
       router.push("/success-application-after");
       return;
     }
-    router.push("/application-after");
+    router.push(`/application-after?id=${id}`);
   };
 
   return (
     <>
-      {!meetingStatus ? (
-        !isMyTicket ? (
-          <View style={styles.buttonContainer}>
-            <Pressable
-              style={[styles.buttonGroup, { backgroundColor: color }]}
-              onPress={getProfile}
-            >
-              <Text style={styles.buttonTitle}>프로필 확인</Text>
-            </Pressable>
-            <View style={[styles.buttonGroup, { backgroundColor: color }]}>
-              <Text style={styles.buttonTitle}>바로 만나기</Text>
-            </View>
-          </View>
-        ) : (
-          isMyTicket && <View></View>
-        )
-      ) : meetingStatus === 1 ? (
+      {meetingStatus === 1 ? (
         <View></View>
       ) : meetingStatus === 2 ? (
         <Pressable
@@ -129,7 +107,6 @@ export default function MatchItem({
   id,
   name,
   meetingStatus,
-  isMyTicket,
   isMyAfter,
   isYourAfter,
 }: MatchItemProps) {
@@ -154,11 +131,11 @@ export default function MatchItem({
         if (!isMyAfter && !isYourAfter) {
           setDescription(itemTarget?.meetingCompleted?.description);
         } else if (isMyAfter && !isYourAfter) {
-          setDescription("상대방의 신청을 조금만 기다려주세요!");
+          setDescription("상대방의 신청을 조금만 기다려주세요");
         } else if (!isMyAfter && isYourAfter) {
-          setDescription("상대방이 애프터 신청을 보냈어요!");
+          setDescription("상대방이 애프터 신청을 보냈어요");
         } else if (isMyAfter && isYourAfter) {
-          setDescription("축하합니다! 상대방과 연결이 되었습니다!");
+          setDescription("축하합니다! 상대방과 연결이 되었습니다");
         }
       }
     };
@@ -187,7 +164,6 @@ export default function MatchItem({
         color={color}
         id={id}
         meetingStatus={meetingStatus}
-        isMyTicket={isMyTicket}
         isMyAfter={isMyAfter}
         isYourAfter={isYourAfter}
       />

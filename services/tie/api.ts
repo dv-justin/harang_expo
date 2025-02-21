@@ -17,3 +17,23 @@ export const getTieMeeting = async (tieId: number) => {
     throw error;
   }
 };
+
+export const updateTieAfter = async (tieId: number) => {
+  try {
+    const response = await apiClient.patch(
+      `/ties/${tieId}/after`,
+      {
+        user_after: true,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return;
+  } catch (error) {
+    throw error;
+  }
+};

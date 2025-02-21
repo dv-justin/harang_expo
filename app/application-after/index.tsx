@@ -1,6 +1,7 @@
 import PageTitle from "@/components/PageTitle";
 import { theme } from "@/constants/Theme";
-import { useRouter } from "expo-router";
+import { updateTieAfter } from "@/services/tie/api";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -17,7 +18,11 @@ import {
 
 export default function ApplicationAfter() {
   const router = useRouter();
-  const handleButton = () => {
+
+  const { id } = useLocalSearchParams();
+
+  const handleButton = async () => {
+    await updateTieAfter(Number(id));
     return router.push("/(tabs)/tie");
   };
   return (
