@@ -21,8 +21,8 @@ export default function ApplicationAfter() {
 
   const { id } = useLocalSearchParams();
 
-  const handleButton = async () => {
-    await updateTieAfter(Number(id));
+  const handleButton = async (status: boolean) => {
+    await updateTieAfter(Number(id), { user_after: status });
     return router.push("/(tabs)/tie");
   };
   return (
@@ -32,14 +32,19 @@ export default function ApplicationAfter() {
       <View style={styles.selectButtonGroup}>
         <Pressable
           style={[styles.selectButton, styles.primaryBackgroundColor]}
-          onPress={handleButton}
+          onPress={() => handleButton(true)}
         >
           <Text style={styles.buttonTitle}>
             맘에 들었어요 애프터 신청할게요!
           </Text>
         </Pressable>
-        <View style={[styles.selectButton, styles.subBackgroundColor]}>
-          <Text style={styles.buttonTitle}>별로였어요 다음 기회에...</Text>
+        <View>
+          <Pressable
+            style={[styles.selectButton, styles.subBackgroundColor]}
+            onPress={() => handleButton(true)}
+          >
+            <Text style={styles.buttonTitle}>별로였어요 다음 기회에...</Text>
+          </Pressable>
         </View>
       </View>
     </View>

@@ -18,19 +18,16 @@ export const getTieMeeting = async (tieId: number) => {
   }
 };
 
-export const updateTieAfter = async (tieId: number) => {
+export const updateTieAfter = async (
+  tieId: number,
+  data: { user_after: boolean }
+) => {
   try {
-    const response = await apiClient.patch(
-      `/ties/${tieId}/after`,
-      {
-        user_after: true,
+    const response = await apiClient.patch(`/ties/${tieId}/after`, data, {
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    });
 
     return;
   } catch (error) {
