@@ -3,7 +3,7 @@ import { theme } from "@/constants/Theme";
 import { refreshAccessToken } from "@/services/auth/api";
 import { getRefreshToken, setAccessToken } from "@/services/auth/auth";
 import { getTieMeeting } from "@/services/tie/api";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import {
@@ -19,6 +19,7 @@ export interface Meeting {
 
 export default function PlanOverview() {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
   const [meeting, setMeeting] = useState<Meeting>();
   const handleBackClickButton = () => {
     router.back();
