@@ -1,5 +1,6 @@
 import PageTitle from "@/components/PageTitle";
 import { theme } from "@/constants/Theme";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -15,6 +16,10 @@ import {
 } from "react-native-responsive-dimensions";
 
 export default function SuccessApplicationAfter() {
+  const router = useRouter();
+
+  const { id } = useLocalSearchParams();
+
   return (
     <View style={styles.container}>
       <PageTitle title01="상대방 연락처" title02="확인부탁드려요!" />

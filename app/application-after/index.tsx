@@ -23,7 +23,7 @@ export default function ApplicationAfter() {
 
   const handleButton = async (status: boolean) => {
     await updateTieAfter(Number(id), { user_after: status });
-    return router.push("/(tabs)/tie");
+    return router.replace("/(tabs)/tie");
   };
   return (
     <View style={styles.container}>
@@ -41,7 +41,7 @@ export default function ApplicationAfter() {
         <View>
           <Pressable
             style={[styles.selectButton, styles.subBackgroundColor]}
-            onPress={() => handleButton(true)}
+            onPress={() => handleButton(false)}
           >
             <Text style={styles.buttonTitle}>별로였어요 다음 기회에...</Text>
           </Pressable>
