@@ -3,18 +3,9 @@ import { theme } from "@/constants/Theme";
 import { refreshAccessToken } from "@/services/auth/api";
 import { getRefreshToken, setAccessToken } from "@/services/auth/auth";
 import { getTies } from "@/services/tie/api";
-import { useFocusEffect, useNavigation, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Pressable,
-  ScrollView,
-  RefreshControl,
-  BackHandler,
-  Alert,
-} from "react-native";
+import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
 import {
   responsiveHeight,
   responsiveWidth,

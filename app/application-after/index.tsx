@@ -23,7 +23,7 @@ export default function ApplicationAfter() {
 
   const handleButton = async (status: boolean) => {
     await updateTieAfter(Number(id), { user_after: status });
-    return router.back();
+    return router.replace("/(tabs)/tie");
   };
   return (
     <View style={styles.container}>
