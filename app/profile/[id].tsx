@@ -50,8 +50,6 @@ export default function UserProfile() {
   const birthDate = useRef<number>();
 
   const [profile, setProfile] = useState<Profile>();
-  const [mainButtonText, setMainButtonText] = useState("");
-  const [subButtonText, setSubButtonText] = useState("");
 
   const getButtonSubText = () => {
     if (
@@ -132,7 +130,7 @@ export default function UserProfile() {
 
   const fetchData = async () => {
     try {
-      const userValue = await getUserId(Number(id));
+      const userValue = await getUserId(Number(id), true);
 
       if (userValue) {
         setProfile(userValue);

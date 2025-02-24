@@ -1,9 +1,11 @@
 import { User } from "@/atoms/user/userAtom";
 import apiClient from "../api.client";
 
-export const getUserId = async (userId: number) => {
+export const getUserId = async (userId: number, includeMatch: boolean) => {
   try {
-    const response = await apiClient.get(`/users/${userId}?include_match=true`);
+    const response = await apiClient.get(
+      `/users/${userId}?include_match=${includeMatch}`
+    );
     return response.data;
   } catch (error) {
     throw error;

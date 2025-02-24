@@ -3,7 +3,7 @@ import { theme } from "@/constants/Theme";
 import { refreshAccessToken } from "@/services/auth/api";
 import { getRefreshToken, setAccessToken } from "@/services/auth/auth";
 import { getTies } from "@/services/tie/api";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   View,
@@ -12,6 +12,8 @@ import {
   Pressable,
   ScrollView,
   RefreshControl,
+  BackHandler,
+  Alert,
 } from "react-native";
 import {
   responsiveHeight,
@@ -30,14 +32,8 @@ interface Tie {
 export default function TieScreen() {
   const router = useRouter();
 
-  const [status, setStatus] = useState(false);
   const [ties, setTies] = useState<Tie[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const statusButtonClick = (statusValue: boolean) => {
-    setStatus(statusValue);
-    return;
-  };
 
   async function handleUnauthorizedError(error: any) {
     if (error.status === 401) {
