@@ -10,5 +10,10 @@ export const theme = {
     subText: "#909196",
     inActiveText: "#6B6A6D",
     inActive: "#ECECEC",
+    payment: "#2d3436",
+    paymentRgb: "rgba(45, 52, 54, 0.7)",
+    matching: "#FF9F45",
+    matchingRgb: "rgba(255, 159, 69, 0.9)",
+    black: "#000000",
   },
 };
