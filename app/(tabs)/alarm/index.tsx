@@ -1,6 +1,13 @@
 import { theme } from "@/constants/Theme";
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Text, Pressable, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  Image,
+  ScrollView,
+} from "react-native";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -15,14 +22,19 @@ interface Notification {
 
 export default function AlarmScreen() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [selectNotifications, setSelectNotifications] = useState<
+    Notification[]
+  >([]);
+  const [selectGroupStatus, setSelectGroupStatus] = useState<Boolean>(false);
+  const [selectItem, setSelectItem] = useState<String>("전체");
   useEffect(() => {
     const socket = io("http://localhost:4001/notifications", {
       transports: ["websocket"],
     });
 
     socket.on("notifications", (data) => {
-      console.log("Received message:", data);
       setNotifications(data);
+      setSelectNotifications(data);
     });
 
     socket.on("disconnect", () => {
@@ -76,31 +88,112 @@ export default function AlarmScreen() {
     };
   };
 
+  const handleHeader = () => {
+    setSelectGroupStatus(!selectGroupStatus);
+  };
+
+  const handleSelectItem = (category: string) => {
+    const data = notifications.filter((notification) => {
+      if (category === "전체") {
+        return true;
+      }
+      return notification?.category === category;
+    });
+
+    setSelectItem(category);
+    setSelectNotifications(data);
+    setSelectGroupStatus(!selectGroupStatus);
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.selectBar}>
-        <View></View>
-        <Text style={styles.selectBarTitle}>전체</Text>
-        <Image
-          style={styles.nextImage}
-          source={require("@/assets/images/next.png")}
-        />
-      </View>
-      {notifications?.map((notification, index) => (
-        <View style={styles.alarmGroup} key={index}>
-          <View
-            style={[
-              styles.alarmItem,
-              getAlarmItemStyle(notification?.category),
-            ]}
-          >
-            <View style={[styles.badge, getBadgeStyle(notification?.category)]}>
-              <Text style={styles.badgeTitle}>{notification?.category}</Text>
+    <View>
+      <View style={styles.container}>
+        <Pressable style={styles.selectBar} onPress={handleHeader}>
+          <View></View>
+          <Text style={styles.selectBarTitle}>{selectItem}</Text>
+          <Image
+            style={styles.nextImage}
+            source={require("@/assets/images/next.png")}
+          />
+        </Pressable>
+        <ScrollView>
+          {selectNotifications?.map((notification, index) => (
+            <View style={styles.alarmGroup} key={index}>
+              <View
+                style={[
+                  styles.alarmItem,
+                  getAlarmItemStyle(notification?.category),
+                ]}
+              >
+                <View
+                  style={[styles.badge, getBadgeStyle(notification?.category)]}
+                >
+                  <Text style={styles.badgeTitle}>
+                    {notification?.category}
+                  </Text>
+                </View>
+                <Text style={styles.alarmTitle}>{notification?.contents}</Text>
+              </View>
             </View>
-            <Text style={styles.alarmTitle}>{notification?.contents}</Text>
-          </View>
+          ))}
+        </ScrollView>
+      </View>
+      {selectGroupStatus && (
+        <View style={styles.selectGroup}>
+          <Pressable
+            style={styles.selectItem}
+            onPress={() => handleSelectItem("전체")}
+          >
+            <Text style={styles.selectItemText}>전체</Text>
+            {selectItem === "전체" && (
+              <Image
+                style={styles.selectImage}
+                resizeMode="contain"
+                source={require("@/assets/images/check-white.png")}
+              />
+            )}
+          </Pressable>
+          <Pressable
+            style={styles.selectItem}
+            onPress={() => handleSelectItem("매칭")}
+          >
+            <Text style={styles.selectItemText}>매칭</Text>
+            {selectItem === "매칭" && (
+              <Image
+                style={styles.selectImage}
+                resizeMode="contain"
+                source={require("@/assets/images/check-white.png")}
+              />
+            )}
+          </Pressable>
+          <Pressable
+            style={styles.selectItem}
+            onPress={() => handleSelectItem("만남")}
+          >
+            <Text style={styles.selectItemText}>만남</Text>
+            {selectItem === "만남" && (
+              <Image
+                style={styles.selectImage}
+                resizeMode="contain"
+                source={require("@/assets/images/check-white.png")}
+              />
+            )}
+          </Pressable>
+          <Pressable
+            style={styles.selectItem}
+            onPress={() => handleSelectItem("결제")}
+          >
+            <Text style={styles.selectItemText}>결제</Text>
+            {selectItem === "결제" && (
+              <Image
+                style={styles.selectImage}
+                resizeMode="contain"
+                source={require("@/assets/images/check-white.png")}
+              />
+            )}
+          </Pressable>
         </View>
-      ))}
+      )}
     </View>
   );
 }
@@ -108,7 +201,7 @@ export default function AlarmScreen() {
 const styles = StyleSheet.create({
   container: {
     width: responsiveWidth(100),
-    height: responsiveHeight(100),
+    height: responsiveHeight(80),
     paddingVertical: responsiveWidth(8),
     paddingHorizontal: responsiveWidth(5),
     backgroundColor: theme.colors.background,
@@ -160,5 +253,33 @@ const styles = StyleSheet.create({
   alarmTitle: {
     fontSize: 14,
     color: theme.colors.white,
+  },
+  selectGroup: {
+    position: "absolute",
+    width: responsiveWidth(100),
+    height: responsiveHeight(30),
+    backgroundColor: theme.colors.primary,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 0,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+  selectItem: {
+    width: responsiveWidth(90),
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingBottom: 20,
+    paddingHorizontal: 24,
+  },
+  selectItemText: {
+    fontSize: 20,
+    color: theme.colors.white,
+    fontWeight: "700",
+  },
+  selectImage: {
+    width: 16,
+    height: 16,
   },
 });
