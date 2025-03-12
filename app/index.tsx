@@ -40,6 +40,7 @@ export default function Landing() {
         let userStatus: string | undefined;
         if (accessToken) {
           const userValue = await getUserIdToken();
+
           userStatus = userValue?.status;
           const {
             id,
@@ -52,6 +53,7 @@ export default function Landing() {
             regionLevel2,
             churchName,
             pastorName,
+            churchRegionName,
             schoolAndMajor,
             companyName,
             yourFaith,
@@ -74,6 +76,7 @@ export default function Landing() {
             regionLevel2,
             churchName,
             pastorName,
+            churchRegionName,
             schoolAndMajor,
             companyName,
             yourFaith,
