@@ -28,6 +28,7 @@ export interface Profile {
   regionLevel2: string;
   churchName?: string;
   pastorName?: string;
+  churchRegionName?: string;
   schoolAndMajor?: string;
   companyName?: string;
   yourFaith?: string;
@@ -37,6 +38,7 @@ export interface Profile {
   coupleActivity?: string;
   expectedMeeting?: string;
   merit?: string;
+  mbti: string;
   manUserTicketUsed: number;
   femaleUserTicketUsed: number;
   allTicketsUsedBy: string;
@@ -131,7 +133,6 @@ export default function UserProfile() {
   const fetchData = async () => {
     try {
       const userValue = await getUserId(Number(id), true);
-
       if (userValue) {
         setProfile(userValue);
         birthDate.current = calculateBirthdate(userValue?.birthdate);
@@ -172,6 +173,7 @@ export default function UserProfile() {
           <Text>
             <Text style={styles.nameAgeText}>{profile?.name} </Text>
             <Text style={styles.nameAgeText}>{birthDate.current}</Text>
+            <Text style={styles.nameAgeText}> {profile?.mbti}</Text>
           </Text>
 
           <View style={styles.addInfoGroup}>
@@ -179,21 +181,23 @@ export default function UserProfile() {
               style={styles.addInfoImage}
               source={require("@/assets/images/profile/region.png")}
             />
-            <Text style={styles.addInfoText}>인천광역시</Text>
+            <Text style={styles.addInfoText}>
+              {profile?.regionLevel1} {profile?.regionLevel2}
+            </Text>
           </View>
           <View style={styles.addInfoGroup}>
             <Image
               style={styles.addInfoImage}
               source={require("@/assets/images/profile/school.png")}
             />
-            <Text style={styles.addInfoText}>서울대/경영학과</Text>
+            <Text style={styles.addInfoText}>{profile?.schoolAndMajor}</Text>
           </View>
           <View style={styles.addInfoGroup}>
             <Image
               style={styles.addInfoImage}
               source={require("@/assets/images/profile/job.png")}
             />
-            <Text style={styles.addInfoText}>IT/개발자</Text>
+            <Text style={styles.addInfoText}>{profile?.companyName}</Text>
           </View>
         </View>
         <View style={styles.infoGroup}>
@@ -280,6 +284,7 @@ export default function UserProfile() {
 const styles = StyleSheet.create({
   container: {
     width: responsiveWidth(100),
+    paddingBottom: responsiveHeight(8),
     backgroundColor: theme.colors.white,
     position: "relative",
   },

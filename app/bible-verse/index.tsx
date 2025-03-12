@@ -33,7 +33,7 @@ export default function BibleVerse() {
     setContent(text);
   };
 
-  const buttonClick = () => {
+  const handleNextButton = () => {
     setButtonState(true);
     if (content.length < 30) {
       return;
@@ -82,7 +82,7 @@ export default function BibleVerse() {
             ? "최소 30자 이상 입력해주세요!!"
             : ""}
         </Text>
-        <Pressable style={styles.buttonGroup} onPress={buttonClick}>
+        <Pressable style={styles.buttonGroup} onPress={handleNextButton}>
           <Button title="다음" />
         </Pressable>
       </View>

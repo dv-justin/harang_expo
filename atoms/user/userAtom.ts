@@ -10,6 +10,7 @@ export interface User {
   regionLevel2: string;
   churchName: string;
   pastorName: string;
+  churchRegionName: string;
   schoolAndMajor: string;
   companyName: string;
   yourFaith: string;
@@ -19,6 +20,7 @@ export interface User {
   coupleActivity: string;
   expectedMeeting: string;
   merit: string;
+  mbti: string;
   profileImage: string[];
   idealTypeAge: string;
   idealTypeDistance: number;
@@ -36,6 +38,7 @@ export const initialUserState: User = {
   regionLevel2: "",
   churchName: "",
   pastorName: "",
+  churchRegionName: "",
   schoolAndMajor: "",
   companyName: "",
   yourFaith: "",
@@ -45,6 +48,7 @@ export const initialUserState: User = {
   coupleActivity: "",
   expectedMeeting: "",
   merit: "",
+  mbti: "",
   profileImage: [],
   idealTypeAge: "",
   idealTypeDistance: 0,

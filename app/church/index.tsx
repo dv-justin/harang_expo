@@ -25,8 +25,10 @@ export default function Church() {
 
   const [isChurchNameFocused, setIsChurchNameFocused] = useState(false);
   const [isPastorFocused, setIsPastorFocused] = useState(false);
+  const [isRegionFocused, setIsRegionFocused] = useState(false);
   const [churchName, setChurchName] = useState("");
   const [pastorName, setPastorName] = useState("");
+  const [region, setRegion] = useState("");
   const [buttonState, setButtonState] = useState(false);
 
   const [user, setUser] = useRecoilState(userAtom);
@@ -39,9 +41,14 @@ export default function Church() {
     setPastorName(text);
   };
 
+  const handleChangeRegion = (text: string) => {
+    setRegion(text);
+  };
+
   const buttonClick = () => {
     setButtonState(true);
-    if (!churchName || !pastorName) {
+
+    if (!churchName || !pastorName || !region) {
       return;
     }
 
@@ -49,6 +56,7 @@ export default function Church() {
       ...user,
       churchName: churchName,
       pastorName: pastorName,
+      churchRegionName: region,
     });
 
     router.push("/school");
@@ -61,6 +69,7 @@ export default function Church() {
   useEffect(() => {
     setChurchName(user?.churchName);
     setPastorName(user?.pastorName);
+    setRegion(user?.churchRegionName);
   }, []);
 
   return (
@@ -84,7 +93,7 @@ export default function Church() {
             onBlur={() => setIsChurchNameFocused(false)}
           />
           <Text style={styles.alarmInputName}>
-            {buttonState && !churchName ? "교회 이름을 입력해주세요!" : ""}
+            {buttonState && !churchName ? "교회 이름을 입력해주세요" : ""}
           </Text>
 
           <Text style={styles.title}>담임목사 성함</Text>
@@ -102,7 +111,25 @@ export default function Church() {
             onBlur={() => setIsPastorFocused(false)}
           />
           <Text style={styles.alarmInputName}>
-            {buttonState && !pastorName ? "담임목사 성함을 입력해주세요!" : ""}
+            {buttonState && !pastorName ? "담임목사 성함을 입력해주세요" : ""}
+          </Text>
+
+          <Text style={styles.title}>교회 지역</Text>
+          <TextInput
+            style={[
+              styles.input,
+              isRegionFocused ? styles.activeColor : styles.inActiveColor,
+            ]}
+            placeholder="인천광역시 서구"
+            placeholderTextColor="#999999"
+            keyboardType="default"
+            value={region}
+            onChangeText={handleChangeRegion}
+            onFocus={() => setIsRegionFocused(true)}
+            onBlur={() => setIsRegionFocused(false)}
+          />
+          <Text style={styles.alarmInputName}>
+            {buttonState && !region ? "교회 지역을 입력해주세요" : ""}
           </Text>
         </View>
 
