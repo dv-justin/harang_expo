@@ -8,20 +8,20 @@ import {
 import { useRouter } from "expo-router";
 
 const itemTarget = {
-  meetingCompleted: {
-    title: "만남 완료",
+  applicationAfter: {
+    label: "연결 대기중",
     color: "#3AA6B9",
-    description: "맘에 드셨다면 애프터 신청 부탁드려요.",
+    description: "상대방이 애프터 신청을 보냈어요.",
   },
-  schedulingTheMeeting: {
-    title: "만남 일정 조율 중",
+  wait: {
+    label: "연결 대기중",
     color: "#23C9F3",
-    description: "매니저 연락을 조금만 기다려주세요.",
+    description: "상대방의 신청을 기다려주세요.",
   },
-  meetingConfirmed: {
-    title: "만남 확정",
+  success: {
+    label: "연결 성공",
     color: "#0D92F4",
-    description: "만남 일정을 확인해주세요.",
+    description: "축하드려요! 연락처를 확인해주세요.",
   },
 };
 
@@ -30,8 +30,9 @@ interface MatchItemProps {
   name: string;
   meetingStatus: number;
   isMyTicket: boolean;
-  isMyAfter: boolean;
-  isYourAfter: boolean;
+  isYourTicket: boolean;
+  allTicketsUsedBy: boolean;
+  yourUserId: number;
 }
 
 interface BadgeProps {
@@ -43,8 +44,16 @@ interface ButtonProps {
   color: string;
   id: number;
   meetingStatus: number;
-  isMyAfter: boolean;
-  isYourAfter: boolean;
+  isMyTicket: boolean;
+  isYourTicket: boolean;
+  allTicketsUsedBy: boolean;
+  yourUserId: number;
+}
+
+interface DataProps {
+  label: string;
+  color: string;
+  description: string;
 }
 
 function Badge({ label, color }: BadgeProps) {
@@ -59,45 +68,40 @@ function Button({
   color,
   id,
   meetingStatus,
-  isMyAfter,
-  isYourAfter,
+  isMyTicket,
+  isYourTicket,
+  allTicketsUsedBy,
+  yourUserId,
 }: ButtonProps) {
   const router = useRouter();
 
-  const handlePlan = () => {
-    router.push(`/plan-overview?id=${id}`);
-  };
-
-  const handleAfter = () => {
-    if (isMyAfter && isYourAfter) {
-      router.push("/success-application-after");
+  const handleProfile = () => {
+    if (!isMyTicket && isYourTicket && allTicketsUsedBy) {
+      router.push(`/profile?id=${yourUserId}&type=received`);
       return;
     }
-    router.push(`/application-after?id=${id}`);
+
+    router.push(`/profile?id=${yourUserId}&type=my`);
   };
 
   return (
     <>
-      {meetingStatus === 1 ? (
-        <View></View>
-      ) : meetingStatus === 2 ? (
+      {isMyTicket && isYourTicket ? (
         <Pressable
           style={[styles.fullButtonGroup, { backgroundColor: color }]}
-          onPress={handlePlan}
+          // onPress={handlePlan}
         >
-          <Text style={styles.buttonTitle}>만남 일정 및 가이드</Text>
+          <Text style={styles.buttonTitle}>연락처 확인</Text>
         </Pressable>
-      ) : isMyAfter && !isYourAfter ? (
-        <View></View>
+      ) : isMyTicket || isYourTicket ? (
+        <Pressable
+          style={[styles.fullButtonGroup, { backgroundColor: color }]}
+          onPress={handleProfile}
+        >
+          <Text style={styles.buttonTitle}>프로필 확인</Text>
+        </Pressable>
       ) : (
-        <Pressable
-          style={[styles.fullButtonGroup, { backgroundColor: color }]}
-          onPress={handleAfter}
-        >
-          <Text style={styles.buttonTitle}>
-            {isMyAfter && isYourAfter ? "연락처 확인하기" : "애프터 신청"}
-          </Text>
-        </Pressable>
+        <View></View>
       )}
     </>
   );
@@ -107,36 +111,21 @@ export default function MatchItem({
   id,
   name,
   meetingStatus,
-  isMyAfter,
-  isYourAfter,
+  isMyTicket,
+  isYourTicket,
+  allTicketsUsedBy,
+  yourUserId,
 }: MatchItemProps) {
-  const [label, setLabel] = useState("");
-  const [color, setColor] = useState("");
-  const [description, setDescription] = useState("");
+  const [data, setData] = useState<DataProps>();
 
   useEffect(() => {
     const getBableLabel = () => {
-      if (meetingStatus === 1) {
-        setLabel(itemTarget?.schedulingTheMeeting?.title);
-        setColor(itemTarget?.schedulingTheMeeting?.color);
-        setDescription(itemTarget?.schedulingTheMeeting?.description);
-      } else if (meetingStatus === 2) {
-        setLabel(itemTarget?.meetingConfirmed?.title);
-        setColor(itemTarget?.meetingConfirmed?.color);
-        setDescription(itemTarget?.meetingConfirmed?.description);
-      } else if (meetingStatus === 3) {
-        setLabel(itemTarget?.meetingCompleted?.title);
-        setColor(itemTarget?.meetingCompleted?.color);
-
-        if (!isMyAfter && !isYourAfter) {
-          setDescription(itemTarget?.meetingCompleted?.description);
-        } else if (isMyAfter && !isYourAfter) {
-          setDescription("상대방의 신청을 조금만 기다려주세요");
-        } else if (!isMyAfter && isYourAfter) {
-          setDescription("상대방이 애프터 신청을 보냈어요");
-        } else if (isMyAfter && isYourAfter) {
-          setDescription("축하합니다! 상대방과 연결이 되었습니다");
-        }
+      if (isMyTicket && isYourTicket) {
+        setData(itemTarget.success);
+      } else if (isMyTicket && !isYourTicket) {
+        setData(itemTarget?.wait);
+      } else if (isYourTicket) {
+        setData(itemTarget?.applicationAfter);
       }
     };
 
@@ -148,10 +137,15 @@ export default function MatchItem({
       <View style={styles.main}>
         <View style={styles.main01}>
           <View style={styles.badgeGroup}>
-            <Badge label={label} color={color} />
+            <Badge label={data?.label!} color={data?.color!} />
+            {!isMyTicket && isYourTicket && allTicketsUsedBy ? (
+              <Badge label="무료 연결" color="#4CAF50" />
+            ) : (
+              <View></View>
+            )}
           </View>
           <Text style={styles.name}>{name}</Text>
-          <Text style={styles.description}>{description}</Text>
+          <Text style={styles.description}>{data?.description!}</Text>
         </View>
         <View style={styles.main02}>
           <Image
@@ -161,11 +155,13 @@ export default function MatchItem({
         </View>
       </View>
       <Button
-        color={color}
+        color={data?.color!}
         id={id}
         meetingStatus={meetingStatus}
-        isMyAfter={isMyAfter}
-        isYourAfter={isYourAfter}
+        isMyTicket={isMyTicket}
+        isYourTicket={isYourTicket}
+        allTicketsUsedBy={allTicketsUsedBy}
+        yourUserId={yourUserId}
       />
     </View>
   );
@@ -223,10 +219,10 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   image: {
-    width: responsiveWidth(16),
-    height: responsiveWidth(16),
+    width: responsiveWidth(18),
+    height: responsiveWidth(18),
     borderRadius: 5,
-    opacity: 0.2,
+    opacity: 0.8,
   },
 
   buttonContainer: {

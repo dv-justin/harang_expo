@@ -37,7 +37,7 @@ export default function HomeScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const getProfile = () => {
-    router.push(`/profile/${home?.id}`);
+    router.push(`/profile?id=${home?.id}&type=application`);
   };
 
   async function handleUnauthorizedError(error: any) {
@@ -104,7 +104,7 @@ export default function HomeScreen() {
               />
               <Text style={styles.introductionText}>소개가 도착했어요</Text>
               <Text style={styles.introductionSubText}>
-                24시간 이내로 선택 부탁드려요
+                48시간 이내로 선택 부탁드려요
               </Text>
               <Pressable onPress={getProfile}>
                 <Image
@@ -114,7 +114,7 @@ export default function HomeScreen() {
               </Pressable>
               <View style={styles.infoGroup}>
                 <Text style={styles.infoText}>
-                  {maskMiddleName(home?.name)} {home?.birthdate}
+                  {maskMiddleName(home?.name)}
                 </Text>
                 <Text style={styles.infoText}>{home?.address} </Text>
               </View>
@@ -144,7 +144,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: responsiveHeight(80),
+    height:
+      responsiveHeight(100) > 845 ? responsiveHeight(80) : responsiveHeight(90),
     backgroundColor: theme.colors.background,
     flexDirection: "column",
     paddingLeft: responsiveWidth(5),
