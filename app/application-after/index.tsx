@@ -1,16 +1,9 @@
+import Button from "@/components/Button";
 import PageTitle from "@/components/PageTitle";
 import { theme } from "@/constants/Theme";
-import { updateTieAfter } from "@/services/tie/api";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Pressable,
-  TextInput,
-} from "react-native";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { View, StyleSheet, Text, Pressable, TextInput } from "react-native";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -18,35 +11,49 @@ import {
 
 export default function ApplicationAfter() {
   const router = useRouter();
+  const [message, setMessage] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [buttonState, setButtonState] = useState(false);
 
-  const { id } = useLocalSearchParams();
-
-  const handleButton = async (status: boolean) => {
-    await updateTieAfter(Number(id), { user_after: status });
-    return router.replace("/(tabs)/tie");
+  const handleChangeMessage = (text: string) => {
+    setMessage(text);
   };
+
+  const handleApplicationButton = () => {
+    setButtonState(true);
+
+    if (message.length < 30) {
+      return;
+    }
+
+    router.push("/point");
+  };
+
   return (
     <View style={styles.container}>
-      <PageTitle title01="맘에 드셨다면" title02="애프터 신청 부탁드려요!" />
-
-      <View style={styles.selectButtonGroup}>
-        <Pressable
-          style={[styles.selectButton, styles.primaryBackgroundColor]}
-          onPress={() => handleButton(true)}
-        >
-          <Text style={styles.buttonTitle}>
-            맘에 들었어요 애프터 신청할게요!
-          </Text>
-        </Pressable>
-        <View>
-          <Pressable
-            style={[styles.selectButton, styles.subBackgroundColor]}
-            onPress={() => handleButton(false)}
-          >
-            <Text style={styles.buttonTitle}>별로였어요 다음 기회에...</Text>
-          </Pressable>
-        </View>
-      </View>
+      <PageTitle title01="애프터 신청 메세지를" title02="작성해주세요" />
+      <TextInput
+        style={[
+          styles.input,
+          isFocused ? styles.activeColor : styles.inActiveColor,
+        ]}
+        multiline={true}
+        placeholder="최소 30자 이상 입력해주세요"
+        placeholderTextColor="#999999"
+        keyboardType="default"
+        value={message}
+        onChangeText={handleChangeMessage}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+      />
+      <Text style={styles.alarmInputName}>
+        {buttonState && message?.length < 30
+          ? "최소 30자 이상 입력해주세요!!"
+          : ""}
+      </Text>
+      <Pressable style={styles.buttonGroup} onPress={handleApplicationButton}>
+        <Button title="애프터 신청하기" />
+      </Pressable>
     </View>
   );
 }
@@ -56,30 +63,42 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     paddingVertical: 2,
   },
-  selectButtonGroup: {
+
+  input: {
+    width: responsiveWidth(80),
+    height: responsiveHeight(20),
+    borderWidth: 2,
+    borderRadius: 10,
+    paddingVertical: responsiveHeight(1),
+    paddingLeft: 12,
+    fontSize: responsiveWidth(4),
+    fontWeight: "700",
+    color: theme.colors.primaryText,
+    backgroundColor: "#ffffff",
+    letterSpacing: responsiveWidth(0.8),
+    marginTop: responsiveHeight(2),
+  },
+
+  buttonGroup: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: responsiveHeight(10),
+    marginTop:
+      responsiveHeight(100) > 875 ? responsiveHeight(32) : responsiveHeight(28),
   },
-  selectButton: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: responsiveWidth(80),
-    height: responsiveHeight(6),
-    backgroundColor: theme.colors.primary,
-    borderRadius: 20,
-    marginBottom: responsiveHeight(1.6),
-  },
-  buttonTitle: {
-    fontSize: 16,
+
+  alarmInputName: {
+    height: responsiveHeight(4),
+    fontSize: responsiveWidth(4),
     fontWeight: "700",
-    color: theme.colors.white,
+    marginTop: responsiveHeight(1),
+    color: theme.colors.inActiveText,
   },
-  primaryBackgroundColor: {
-    backgroundColor: theme.colors.primary,
+
+  activeColor: {
+    borderColor: theme.colors.primary,
   },
-  subBackgroundColor: {
-    backgroundColor: theme.colors.sub,
+
+  inActiveColor: {
+    borderColor: theme.colors.subText,
   },
 });

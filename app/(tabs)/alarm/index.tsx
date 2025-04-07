@@ -201,7 +201,8 @@ export default function AlarmScreen() {
 const styles = StyleSheet.create({
   container: {
     width: responsiveWidth(100),
-    height: responsiveHeight(80),
+    height:
+      responsiveHeight(100) > 875 ? responsiveHeight(80) : responsiveHeight(90),
     paddingVertical: responsiveWidth(8),
     paddingHorizontal: responsiveWidth(5),
     backgroundColor: theme.colors.background,
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     borderRadius: 10,
-    backgroundColor: theme.colors.black,
+    backgroundColor: theme.colors.primary,
   },
   nextImage: {
     width: 12,

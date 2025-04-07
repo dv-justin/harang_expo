@@ -14,11 +14,13 @@ import { useRecoilState } from "recoil";
 export default function MyScreen() {
   const [user, setUser] = useRecoilState(userAtom);
 
-  const clickItem = (type: string) => {
+  const handleClickItem = (type: string) => {
     if (type === "idealType") {
       router.push("/ideal-type");
     } else if (type === "myProfile") {
-      router.push(`/profile/${user?.id}`);
+      router.push(`/profile?id=${user?.id}&type=my`);
+    } else if (type === "point") {
+      router.push(`/point`);
     }
   };
   return (
@@ -42,24 +44,27 @@ export default function MyScreen() {
       <View style={styles.contentGroup}>
         <Pressable
           style={styles.contentItem}
-          onPress={() => clickItem("idealType")}
+          onPress={() => handleClickItem("idealType")}
         >
           <Text style={styles.myTitle}>이상형</Text>
         </Pressable>
         <Pressable
           style={styles.contentItem}
-          onPress={() => clickItem("myProfile")}
+          onPress={() => handleClickItem("myProfile")}
         >
           <Text style={styles.myTitle}>내 프로필</Text>
         </Pressable>
       </View>
       <View style={styles.line}></View>
       <View style={styles.contentGroup}>
+        <Pressable
+          style={styles.contentItem}
+          onPress={() => handleClickItem("point")}
+        >
+          <Text style={styles.myTitle}>달란트</Text>
+        </Pressable>
         <View style={styles.contentItem}>
           <Text style={styles.myTitle}>결제내역</Text>
-        </View>
-        <View style={styles.contentItem}>
-          <Text style={styles.myTitle}>포인트</Text>
         </View>
         <View style={styles.contentItem}>
           <Text style={styles.myTitle}>계정관리</Text>

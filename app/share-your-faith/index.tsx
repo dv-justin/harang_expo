@@ -66,7 +66,7 @@ export default function ShareYourFaith() {
             isFocused ? styles.activeColor : styles.inActiveColor,
           ]}
           multiline={true}
-          placeholder="최소 30자 이상 입력해주세요 ㅎㅎ"
+          placeholder="최소 30자 이상 입력해주세요"
           placeholderTextColor="#999999"
           keyboardType="default"
           value={yourFaith}

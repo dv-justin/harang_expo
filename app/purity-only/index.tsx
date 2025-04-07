@@ -7,12 +7,22 @@ import {
 } from "react-native-responsive-dimensions";
 import Button from "@/components/Button";
 import { useRouter } from "expo-router";
+import { register } from "@/services/auth/api";
+import { useRecoilState } from "recoil";
+import { userAtom } from "@/atoms/user/userAtom";
 
 export default function PurityOnly() {
   const router = useRouter();
+  const [user, setUser] = useRecoilState(userAtom);
 
-  const buttonClick = () => {
-    router.push("/meet-safely-local-church-cafe");
+  const buttonClick = async () => {
+    try {
+      await register(user);
+    } catch (error) {
+      router.push("/error");
+    }
+
+    router.push("/approval-pending");
   };
 
   return (
